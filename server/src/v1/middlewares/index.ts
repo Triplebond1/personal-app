@@ -1,4 +1,12 @@
-import Auth from "./auth";
+import auth from "./auth";
 import credentials from "./credentials";
+import rateLimiter from "./rateLimiter";
 
-export { Auth, credentials };
+const authenticate = auth.verifyJwt;
+export {
+  authenticate,
+  credentials,
+  rateLimiter
+};
+
+

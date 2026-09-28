@@ -1,16 +1,12 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
+import { prisma } from "../lib/prisma";
 import "dotenv/config";
 
 class DeviceService {
-  private prisma: PrismaClient;
-  constructor() {
-        const adapter = new PrismaPg({connectionString: process.env.DATABASE_URL!,} );
-    this.prisma = new PrismaClient({ adapter });
-  }
+
+  constructor() { }
 
   public isNewLogin = async (userId: string, userAgent: string, ipAddress: string,token:string) => { 
-    const data = await this.prisma.userDevice.findFirst({
+    const data = await prisma.userDevice.findFirst({
       where: {
         user_id: userId,
         user_agent: userAgent,
@@ -18,7 +14,7 @@ class DeviceService {
       }
     })
     if (!data) {
-      await this.prisma.userDevice.create({
+      await prisma.userDevice.create({
         data: {
           user_id: userId,
           user_agent: userAgent,
@@ -32,7 +28,7 @@ class DeviceService {
   }
 
   public logout = async (userId: string, userAgent: string, ipAddress: string, token:string) => {
-    await this.prisma.userDevice.deleteMany({
+    await prisma.userDevice.deleteMany({
       where: {
         user_id: userId,
         user_agent: userAgent,
@@ -43,7 +39,7 @@ class DeviceService {
   }
 
   public logoutAll = async (userId: string) => {
-    await this.prisma.userDevice.deleteMany({
+    await prisma.userDevice.deleteMany({
       where: {
         user_id: userId
       }
@@ -51,7 +47,7 @@ class DeviceService {
   }
 
   public updateDeviceToken = async (userId: string, userAgent: string, ipAddress: string, token: string, newToken:string) => {
-    const device = await this.prisma.userDevice.findFirst({
+    const device = await prisma.userDevice.findFirst({
       where: {
         user_id: userId,
         user_agent: userAgent,
@@ -62,7 +58,7 @@ class DeviceService {
 
     if (!device) return this.isNewLogin(userId, userAgent, ipAddress, newToken);
 
-    await this.prisma.userDevice.update({
+    await prisma.userDevice.update({
       where: { id: device.id },
       data: {
         refresh_token: newToken

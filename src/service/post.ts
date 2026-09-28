@@ -1,0 +1,230 @@
+
+import api  from "../lib/api";
+
+export type PostStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
+export type PostType = "WRITING" | "RESEARCH" | "PROJECT" | "NOTE";
+
+export type Post = {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  published: boolean;
+  status: PostStatus;
+  type: PostType;
+  authorId: string;
+  readTime: number | null;
+  coverImage: string | null;
+  createdAt: string;
+  updatedAt: string;
+
+  author?: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+  };
+
+  tags?: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+
+  comments?: unknown[];
+};
+
+type PostResponse = {
+  post: Post;
+};
+
+type PostsResponse = {
+  posts: Post[];
+};
+
+export type GetPostsParams = {
+  page?: number;
+  limit?: number;
+  status?: PostStatus;
+  type?: PostType;
+  tag?: string;
+  category?: string;
+};
+
+function buildQueryParams(
+  params: GetPostsParams = {}
+): string {
+  const searchParams = new URLSearchParams();
+
+  if (params.page !== undefined) {
+    searchParams.set("page", String(params.page));
+  }
+
+  if (params.limit !== undefined) {
+    searchParams.set("limit", String(params.limit));
+  }
+
+  if (params.status) {
+    searchParams.set("status", params.status);
+  }
+
+  if (params.type) {
+    searchParams.set("type", params.type);
+  }
+
+  if (params.tag) {
+    searchParams.set("tag", params.tag);
+  }
+
+  if (params.category) {
+    searchParams.set("category", params.category);
+  }
+
+  const query = searchParams.toString();
+
+  return query ? `?${query}` : "";
+}
+
+
+/*
+ * PUBLIC
+ */
+
+export async function getPublishedPosts(): Promise<PostsResponse> {
+  return api<PostsResponse>("/post", {
+    method: "GET",
+  });
+}
+
+export async function getPublishedPostBySlug(
+  slug: string
+): Promise<PostResponse> {
+  return api<PostResponse>(
+    `/post/slug/${encodeURIComponent(slug)}`,
+    {
+      method: "GET",
+    }
+  );
+}
+
+
+/*
+ * PROTECTED
+ */
+
+export async function createPost(
+  post: Record<string, unknown>,
+  accessToken: string
+): Promise<PostResponse> {
+  return api<PostResponse>("/post", {
+    method: "POST",
+    token: accessToken,
+    body: JSON.stringify(post),
+  });
+}
+
+export async function getPosts(
+  accessToken: string,
+  params: GetPostsParams = {}
+): Promise<PostsResponse> {
+  const query = buildQueryParams(params);
+
+  return api<PostsResponse>(`/post/all${query}`, {
+    method: "GET",
+    token: accessToken,
+  });
+}
+
+export async function getDraftPosts(
+  accessToken: string
+): Promise<PostsResponse> {
+  return api<PostsResponse>("/post/drafts", {
+    method: "GET",
+    token: accessToken,
+  });
+}
+
+export async function getPostById(
+  id: string,
+  accessToken: string
+): Promise<PostResponse> {
+  return api<PostResponse>(
+    `/post/${encodeURIComponent(id)}`,
+    {
+      method: "GET",
+      token: accessToken,
+    }
+  );
+}
+
+export async function updatePost(
+  id: string,
+  post: Record<string, unknown>,
+  accessToken: string
+): Promise<PostResponse> {
+  return api<PostResponse>(
+    `/post/${encodeURIComponent(id)}`,
+    {
+      method: "PATCH",
+      token: accessToken,
+      body: JSON.stringify(post),
+    }
+  );
+}
+
+export async function publishPost(
+  id: string,
+  accessToken: string
+): Promise<PostResponse> {
+  return api<PostResponse>(
+    `/post/${encodeURIComponent(id)}/publish`,
+    {
+      method: "PATCH",
+      token: accessToken,
+    }
+  );
+}
+
+export async function archivePost(
+  id: string,
+  accessToken: string
+): Promise<PostResponse> {
+  return api<PostResponse>(
+    `/post/${encodeURIComponent(id)}/archive`,
+    {
+      method: "PATCH",
+      token: accessToken,
+    }
+  );
+}
+
+export async function deletePost(
+  id: string,
+  accessToken: string
+): Promise<void> {
+  await api(`/post/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    token: accessToken,
+  });
+}
+
+export default {
+  getPublishedPosts,
+  getPublishedPostBySlug,
+  createPost,
+  getPosts,
+  getDraftPosts,
+  getPostById,
+  updatePost,
+  publishPost,
+  archivePost,
+  deletePost,
+};
+ 

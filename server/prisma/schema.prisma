@@ -13,20 +13,22 @@ enum Role {
 }
 
 model User {
-  id                   String       @id @default(uuid())
-  email                String       @unique
+  id                   String   @id @default(uuid())
+  email                String   @unique
   firstname            String
   lastname             String
-  role                 Role         @default(USER)
+  role                 Role     @default(USER)
   password             String
   refresh_token        String[]
   verification_code    String?
   reset_password_token String?
-  is_verified          Boolean      @default(false)
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  is_verified          Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
-  devices              UserDevice[]
+  posts    Post[]
+  comments Comment[]
+  devices  UserDevice[]
 }
 
 model UserDevice {
@@ -38,7 +40,93 @@ model UserDevice {
   createdAt     DateTime @default(now())
   refresh_token String
 
-  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, user_agent, ip_address])
+}
+
+enum PostType {
+  WRITING
+  RESEARCH
+  PROJECT
+  NOTE
+}
+
+model Post {
+  id String @id @default(uuid())
+
+  title   String
+  slug    String     @unique
+  excerpt String?
+  content String
+  type    PostType   @default(WRITING)
+  status  PostStatus @default(DRAFT)
+
+  coverImage String?
+
+  readTime Int?
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  tags       Tag[]
+  categories Category[]
+
+  comments Comment[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  @@index([authorId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Comment {
+  id String @id @default(uuid())
+
+  content String
+
+  postId   String
+  authorId String
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId])
+  @@index([authorId])
+}
+
+model Category {
+  id String @id @default(uuid())
+
+  name String @unique
+  slug String @unique
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id String @id @default(uuid())
+
+  name String @unique
+  slug String @unique
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

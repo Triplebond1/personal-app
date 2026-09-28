@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticate, rateLimiter}  from "../middlewares/index";
 import AuthController from "../controllers/AuthController"; 
 
 class AuthRoute {
@@ -11,7 +12,7 @@ class AuthRoute {
   }
 
   private initializeRoutes = (): void => {
-    this.router.post("/login", this.authController.loginUser.bind(this.authController));
+    this.router.post("/login", rateLimiter, this.authController.loginUser.bind(this.authController));
     // Register User
     this.router.post("/register", this.authController.registerUser.bind(this.authController));
 
@@ -22,8 +23,8 @@ class AuthRoute {
     
     // Forgot password
     this.router.route("/forgot-password")
-      .get(this.authController.forgotPassword.bind(this.authController))
-      .post(this.authController.resetPassword.bind(this.authController))
+      .get(rateLimiter, this.authController.forgotPassword.bind(this.authController))
+      .post(rateLimiter, this.authController.resetPassword.bind(this.authController))
   }
 }
 

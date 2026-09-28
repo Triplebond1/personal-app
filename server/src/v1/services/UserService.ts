@@ -1,24 +1,19 @@
-import { PrismaClient } from "@prisma/client";
 import { NewUser, User } from "../types";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { prisma} from "../lib/prisma";
 import "dotenv/config";
 
 
 class UserService {
-  private prisma: PrismaClient
-  constructor() {
-        const adapter = new PrismaPg({connectionString: process.env.DATABASE_URL!,} );
-    this.prisma = new PrismaClient({ adapter });
-  }
+  constructor() { }
 
   public createUser = async (data:NewUser) => {
-    return this.prisma.user.create({
+    return prisma.user.create({
       data
     });
   }
 
   public getUserByMail = async (email: string) => {
-    return this.prisma.user.findUniqueOrThrow({
+    return prisma.user.findUniqueOrThrow({
       where: {
         email
       }
@@ -26,7 +21,7 @@ class UserService {
   }
 
   public findById = async (id: string) => {
-    return await this.prisma.user.findUniqueOrThrow({
+    return await prisma.user.findUniqueOrThrow({
       where: {
         id
       }
@@ -34,7 +29,7 @@ class UserService {
   }
 
   public findByPasswordToken = async (password_token: string) => {
-    return await this.prisma.user.findFirstOrThrow({
+    return await prisma.user.findFirstOrThrow({
       where: {
         reset_password_token: password_token
       }
@@ -42,7 +37,7 @@ class UserService {
   }
 
   public findByVerificationCode = async (verification_code: string) => {
-    return await this.prisma.user.findFirstOrThrow({
+    return await prisma.user.findFirstOrThrow({
       where: {
         verification_code
       }
@@ -50,7 +45,7 @@ class UserService {
   }
 
   public delete = async (id: string) => {
-    return await this.prisma.user.delete({
+    return await prisma.user.delete({
       where: {
         id
       }
@@ -58,7 +53,7 @@ class UserService {
   }
 
   public update = async (id: string, data:User) => {
-    return await this.prisma.user.update({
+    return await prisma.user.update({
       where: {
         id
       },

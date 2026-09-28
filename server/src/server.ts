@@ -12,30 +12,30 @@ import cors from "cors";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import figlet from "figlet";
-import next from "next";
+//import next from "next";
 
-import { credentials, Auth } from "./v1/middlewares";
-import { authRoute, logoutRoute, refreshRoute } from "./v1/route";
+import { credentials, authenticate }   from "./v1/middlewares";
+import { authRoute, logoutRoute, refreshRoute, postRoute  } from "./v1/route";
 
 const PORT = parseInt(process.env.PORT || "3500");
 
 const dev = process.env.NODE_ENV !== "production";
 
-const nextApp = next({
-  dev,
-  hostname: "localhost",
-  port: PORT,
-});
+// const nextApp = next({
+//   dev,
+//   hostname: "localhost",
+//   port: PORT,
+// });
 
-const handle = nextApp.getRequestHandler();
+// const handle = nextApp.getRequestHandler();
 
 class App {
   public app: Application;
-  private auth: Auth;
+  
 
   constructor() {
     this.app = express();
-    this.auth = new Auth();
+    
 
     this.initializeMiddleware();
     this.initializeRoutes();
@@ -78,6 +78,8 @@ class App {
       })
     );
 
+  
+
     this.app.use(express.static("public"));
   };
 
@@ -91,12 +93,13 @@ class App {
 
     this.app.use("/logout", logoutRoute);
 
+    this.app.use("/post", postRoute);
+
     /*
      * Protected API routes
      *
-     * Add protected API routes below this middleware.
      */
-    this.app.use("/api", this.auth.verifyJwt);
+    this.app.use("/api", authenticate);
 
     /*
      * Example protected route
@@ -117,16 +120,16 @@ class App {
      * Everything that wasn't handled by Express
      * is passed to Next.js.
      */
-    this.app.all("/{*splat}", (req: Request, res: Response) => {
-      return handle(req, res);
-    });
+    // this.app.all("/{*splat}", (req: Request, res: Response) => {
+    //   return handle(req, res);
+    // });
   };
 
   public listen = async (port: number): Promise<void> => {
     /*
      * Prepare Next.js before starting Express.
      */
-    await nextApp.prepare();
+    // await nextApp.prepare();
 
     this.app.listen(port, () => {
       figlet.text(
@@ -148,7 +151,7 @@ class App {
       );
 
       console.log(`Server is running on port ${port}`);
-      console.log(`Frontend: http://localhost:${port}`);
+      //console.log(`Frontend: http://localhost:${port}`);
       console.log(`API: http://localhost:${port}/api`);
     });
   };

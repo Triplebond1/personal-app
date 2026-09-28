@@ -1,12 +1,12 @@
 export interface IPost {
-  category: string;
-  title: string;
-  description: string;
-  date: string;
-  readTime: string;
+  category?: string;
+  title?: string;
+  description?: string;
+  date?: string;
+  readTime?: string;
   tags?: string[] | null;
   slug?: string | null;
-  content: IContent[]
+  content?: IContent[]
 }
 
 export interface IContent {

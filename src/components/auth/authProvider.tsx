@@ -1,4 +1,3 @@
-"use client";
 
 import {
   createContext,
@@ -8,42 +7,79 @@ import {
   ReactNode,
 } from "react";
 
+import {
+  login as loginRequest,
+  logout as logoutRequest,
+  refreshSession,
+  User,
+} from "../../service/auth";
+
 type AuthContextType = {
+  user: User | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: () => void;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export function AuthProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const authenticated =
-      localStorage.getItem("dashboard_authenticated") === "true";
+    const restoreSession = async () => {
+      try {
+        const response = await refreshSession();
 
-    setIsAuthenticated(authenticated);
-    setIsLoading(false);
+        setUser(response.user);
+        setAccessToken(response.user.access_token);
+      } catch {
+        setUser(null);
+        setAccessToken(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    restoreSession();
   }, []);
 
-  function login() {
-    localStorage.setItem("dashboard_authenticated", "true");
-    setIsAuthenticated(true);
-  }
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<void> => {
+    const response = await loginRequest(email, password);
 
-  function logout() {
-    localStorage.removeItem("dashboard_authenticated");
-    setIsAuthenticated(false);
-  }
+    setUser(response.user);
+    setAccessToken(response.user.access_token);
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      await logoutRequest();
+    } finally {
+      setUser(null);
+      setAccessToken(null);
+    }
+  };
+
+  const isAuthenticated = !!user && !!accessToken;
 
   return (
     <AuthContext.Provider
       value={{
+        user,
+        accessToken,
         isAuthenticated,
         isLoading,
         login,

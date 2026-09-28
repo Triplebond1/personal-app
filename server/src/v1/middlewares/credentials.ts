@@ -10,4 +10,4 @@ const credentials = (req: Request, res: Response, next: NextFunction) => {
   next()
 }
 
-export default credentials
+export default  credentials;
