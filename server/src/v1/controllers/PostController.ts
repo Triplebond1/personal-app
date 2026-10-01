@@ -9,6 +9,7 @@ import {
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { GetPostsInput } from "../types/post";
+import { AuthenticatedRequest } from "../types";
 
 
 class PostController {
@@ -27,7 +28,7 @@ class PostController {
   // Create a new post
   //////////////////////////////////////////
 
-  public createPost = async (req: Request, res: Response) => {
+  public createPost = async (req: AuthenticatedRequest, res: Response) => {
 
     const {
       title,
@@ -53,7 +54,16 @@ class PostController {
     }
 
 
-    const authorId = (req as any).user.id;
+    const authorId = req.user?.id;
+    if (!authorId) {
+
+      return sendErrorResponse(
+        res,
+        401,
+        "Unauthorized"
+      );
+
+    }
 
 
     try {

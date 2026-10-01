@@ -1,29 +1,56 @@
-export interface IPost {
-  category?: string;
-  title?: string;
-  description?: string;
-  date?: string;
-  readTime?: string;
-  tags?: string[] | null;
-  slug?: string | null;
-  content?: IContent[]
-}
+export type PostStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-export interface IContent {
-  type: 'paragraph' | 'heading' | 'code';
-  text: string;
-}
+export type PostType = "WRITING" | "RESEARCH" | "PROJECT" | "NOTE";
 
-type Post = {
+export type Post = {
   id: string;
   title: string;
   slug: string;
-  excerpt: string;
   content: string;
-  tags: string[];
+  published: boolean;
+  status: PostStatus;
+  type: PostType;
+  authorId: string;
+  readTime: number | null;
   coverImage: string | null;
-  status: "draft" | "published";
   createdAt: string;
   updatedAt: string;
-  publishedAt: string | null;
+
+  author?: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+  };
+
+  tags?: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+
+  comments?: unknown[];
+};
+
+export type PostResponse = {
+  post: Post;
+};
+
+export type PostsResponse = {
+  posts: Post[];
+};
+
+export type GetPostsParams = {
+  page?: number;
+  limit?: number;
+  status?: PostStatus;
+  type?: PostType;
+  tag?: string;
+  category?: string;
 };

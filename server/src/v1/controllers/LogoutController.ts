@@ -4,19 +4,16 @@ import {
   sendErrorResponse,
   sendSuccessResponse,
 } from "../utils/responseHelper";
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { prisma } from "../lib/prisma";
 import DeviceServices from "../services/DeviceServices";
 import "dotenv/config";
 
 class LogoutController {
-  private prisma: PrismaClient;
   private user: UserService;
   private auth: DeviceServices;
   constructor() {
-    const adapter = new PrismaPg({connectionString: process.env.DATABASE_URL!,} );
-    this.prisma = new PrismaClient({ adapter });
+
     this.user = new UserService();
     this.auth = new DeviceServices();
   }
@@ -29,7 +26,7 @@ class LogoutController {
 
     const oldToken = cookies.refresh_token;
     try {
-      const foundUser = await this.prisma.user.findFirstOrThrow({
+      const foundUser = await prisma.user.findFirstOrThrow({
         where: {
           refresh_token: {
             has: oldToken,
@@ -70,7 +67,7 @@ class LogoutController {
     const { id }: { id?: string }  = req.params;
     if (!id) return sendErrorResponse(res, 400, "User Id is required");
     try {
-      const foundUser = await this.prisma.user.findUniqueOrThrow({
+      const foundUser = await prisma.user.findUniqueOrThrow({
         where: { id },
       });
       foundUser.refresh_token = [];

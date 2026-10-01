@@ -65,10 +65,9 @@ class RefreshController{
 
       res.cookie("refresh_token", new_refresh_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
-       
+        sameSite: "none"
       });
 
       return sendSuccessResponse(res,200,"Authenticated",{user})

@@ -16,33 +16,30 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-//    function handleSubmit() {
-//     setError("");
-//     setIsLoading(true);
 
-//     console.log({
-//       email,
-//       password,
-//       rememberMe,
-//     });
+async function handleSubmit(
+  event: React.SubmitEvent<HTMLFormElement>
+) {
+  event.preventDefault();
 
-//     setTimeout(() => {
-//       setIsLoading(false);
-//     }, 1000);
-//   }
+  setError("");
+  setIsLoading(true);
 
-  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) 
-  { event.preventDefault();
-     setError(""); setIsLoading(true); 
+  try {
+    await login(email, password);
 
-     // Authentication will be implemented later. 
-     console.log({ email, password, rememberMe, }); 
-      login();
-
-  setTimeout(() => {
-    setIsLoading(false);
     router.push("/dashboard");
-  }, 1000); }
+  } catch (error) {
+    setError(
+      error instanceof Error
+        ? error.message
+        : "Unable to sign in. Please try again."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+}
+
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12">

@@ -1,4 +1,4 @@
-
+"use client";
 import {
   createContext,
   useContext,
@@ -10,6 +10,7 @@ import {
 import {
   login as loginRequest,
   logout as logoutRequest,
+  register as registerRequest,
   refreshSession,
   User,
 } from "../../service/auth";
@@ -21,6 +22,7 @@ type AuthContextType = {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  register: (firstname: string, lastname: string, email: string, password: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(
@@ -73,6 +75,20 @@ export function AuthProvider({
     }
   };
 
+  const register = async (
+    firstname: string,
+    lastname: string,
+    email: string,
+    password: string
+  ): Promise<void> => {
+    
+      const response = await registerRequest(firstname, lastname, email, password);
+  
+    setUser(response.user);
+    setAccessToken(response.user.access_token);
+
+  };
+
   const isAuthenticated = !!user && !!accessToken;
 
   return (
@@ -84,6 +100,7 @@ export function AuthProvider({
         isLoading,
         login,
         logout,
+        register,
       }}
     >
       {children}

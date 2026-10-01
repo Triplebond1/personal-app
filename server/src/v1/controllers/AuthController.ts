@@ -196,13 +196,15 @@ class AuthController {
       const access_token = sign(
         {
           sub: foundUser.id,
+           email: foundUser.email,
           type: "access",
         },
         process.env.ACCESS_TOKEN_SECRET!,
         {
-          expiresIn: "15m",
+          expiresIn: "12h",
         }
       );
+
 
       // Longer-lived refresh token.
       
@@ -264,19 +266,18 @@ class AuthController {
 
       // Store refresh token in an HttpOnly cookie.
       
-      
+      const isProduction = process.env.NODE_ENV === "production";
       res.cookie(
         "refresh_token",
         new_refresh_token,
         {
           httpOnly: true,
 
-          secure:true,
+          secure: isProduction,
 
-          sameSite: "none",
+          sameSite: isProduction ? "none" : "lax",
 
-          maxAge:
-            7 * 24 * 60 * 60 * 1000,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
 
           path: "/",
 

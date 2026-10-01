@@ -9,6 +9,7 @@ import express, {
 } from "express";
 
 import cors from "cors";
+import { corsOption } from "./v1/config";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import figlet from "figlet";
@@ -61,7 +62,7 @@ class App {
 
     this.app.use(credentials);
 
-    this.app.use(cors());
+    this.app.use(cors(corsOption));
 
     this.app.use(cookieParser());
 

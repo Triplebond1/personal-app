@@ -4,6 +4,16 @@ import { prisma } from "../lib/prisma";
 
 import "dotenv/config";
 
+export const publicUserSelect = {
+  id: true,
+  firstname: true,
+  lastname: true,
+  email: true,
+  role: true,
+  is_verified: true,
+  createdAt: true,
+  updatedAt: true
+};
 
 class PostService {
 
@@ -31,6 +41,11 @@ class PostService {
     authorId: string
   ) => {
 
+    if (data.status === "PUBLISHED") {
+      data.readTime = this.calculateReadTime(data.content);
+      data.publishedAt = new Date();
+    }
+
     return prisma.post.create({
 
       data: {
@@ -47,7 +62,11 @@ class PostService {
 
         type: data.type,
 
+        readTime: data.readTime,
+
         coverImage: data.coverImage,
+
+        publishedAt: data.publishedAt,
 
         author: {
           connect: {
@@ -75,7 +94,9 @@ class PostService {
 
       include: {
 
-        author: true,
+        author: {
+          select:  publicUserSelect
+        },
 
         tags: true,
 
@@ -98,7 +119,9 @@ class PostService {
 
       include: {
 
-        author: true,
+        author:{
+          select: publicUserSelect
+        },
 
         tags: true,
 
@@ -123,7 +146,9 @@ class PostService {
 
       include: {
 
-        author: true,
+        author: {
+           select:  publicUserSelect
+        },
 
         tags: true,
 
@@ -165,7 +190,9 @@ public getPosts = async (data: GetPostsInput) => {
     },
 
     include: {
-      author: true,
+      author: {
+          select: publicUserSelect
+        },
       tags: true,
       categories: true
     },
@@ -216,7 +243,9 @@ public getPosts = async (data: GetPostsInput) => {
 
       include: {
 
-        author: true,
+        author:{
+          select: publicUserSelect
+        },
 
         tags: true,
 
@@ -264,7 +293,9 @@ public getPosts = async (data: GetPostsInput) => {
 
       include: {
 
-        author: true,
+        author: {
+          select: publicUserSelect
+        },
 
         tags: true,
 
@@ -281,7 +312,7 @@ public updatePost = async (
   id: string,
   data: UpdatePostInput
 ) => {
-
+    
   const updateData: any = {
     title: data.title,
     slug: data.slug,
@@ -290,6 +321,7 @@ public updatePost = async (
     status: data.status,
     type: data.type,
     coverImage: data.coverImage,
+    publishedAt: data.publishedAt,
 
     tags: data.tagIds
       ? {
@@ -317,6 +349,13 @@ public updatePost = async (
   }
 
 
+  if (data.status === "PUBLISHED") {
+        
+    updateData.publishedAt = new Date();
+      
+     }
+
+
   return prisma.post.update({
 
     where: {
@@ -327,7 +366,9 @@ public updatePost = async (
 
     include: {
 
-      author: true,
+      author: {
+        select: publicUserSelect
+      },
 
       tags: true,
 

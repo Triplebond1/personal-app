@@ -1,14 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
-
-interface JwtPayload {
-  email: string;
-  id: string;
-}
-
-export interface AuthenticatedRequest extends Request {
-  user?: JwtPayload;
-}
+import { AccessTokenPayload, AuthenticatedRequest } from "../types";
 
 class Auth {
   public verifyJwt = (
@@ -30,25 +22,29 @@ class Auth {
 
     const token = authHeader.split(" ")[1];
 
-    const accessTokenSecret = process.env.ACCESS_TOKEN;
+    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
     if (!accessTokenSecret) {
-      throw new Error("ACCESS_TOKEN environment variable is not defined");
+      throw new Error("ACCESS_TOKEN_SECRET environment variable is not defined");
     }
 
     verify(token, accessTokenSecret, (err, decoded) => {
-      if (err) {
-        res.sendStatus(403);
-        return;
-      }
+       if (err) {
+    
+    res.sendStatus(403);
+    return;
+  }
+  
+  const payload = decoded as AccessTokenPayload;
 
-      const decodedPayload = decoded as JwtPayload;
+  req.user = {
+    id: payload.sub,
+    email: payload.email,
+  };
 
-      req.user = {
-        email: decodedPayload.email,
-        id: decodedPayload.id,
-      };
 
+
+  console.log("REQ.USER:", req.user);
       next();
     });
   };
