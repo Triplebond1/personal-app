@@ -1,0 +1,557 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: My Collection
+meta:
+  id: wrk_92c73b1ad5864923ae5a15ade750d762
+  created: 1790834890934
+  modified: 1790834890934
+  description: ""
+collection:
+  - name: POST
+    meta:
+      id: fld_4db493b776c34c8f9b108e9cb9c69d1f
+      created: 1790835514458
+      modified: 1790919860886
+      sortKey: -1790835514458
+      description: ""
+    children:
+      - url: "{{ _.url.base_url }}/post/8e9c4498-5ab0-413f-a548-dc9e3cc7aaf7/archive"
+        name: ARCHIVE POST
+        meta:
+          id: req_5b2a32a31ae449b7aaf9313af0d6d222
+          created: 1790835519104
+          modified: 1790921113274
+          isPrivate: false
+          description: ""
+          sortKey: -1790835519104
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post/8e9c4498-5ab0-413f-a548-dc9e3cc7aaf7/publish"
+        name: PUBLISH POST
+        meta:
+          id: req_098febb921ee4e78a63395d1232daaee
+          created: 1790835522301
+          modified: 1790921054046
+          isPrivate: false
+          description: ""
+          sortKey: -1790835522301
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post"
+        name: CREATE POST
+        meta:
+          id: req_7a4af8d13af2445588ac60aedf9e3ed6
+          created: 1790835525583
+          modified: 1790920271065
+          isPrivate: false
+          description: ""
+          sortKey: -1790837480770
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            { "title": "How Blockchain Security Actually Works",
+             "slug": "how-blockchain-security-actually-works", 
+             "excerpt": "A practical look at the systems and assumptions that make blockchain networks secure.", 
+             "content": "Blockchain security is built from cryptography, consensus, economic incentives, and carefully designed smart contracts.",
+             "status": "DRAFT",
+             "type": "PROJECT", 
+             "coverImage": "https://example.com/images/blockchain-security.jpg" }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post/8e9c4498-5ab0-413f-a548-dc9e3cc7aaf7"
+        name: UPDATE POST
+        meta:
+          id: req_fea759af40ac41e9909a07a4fe297fd0
+          created: 1790837418612
+          modified: 1790921011708
+          isPrivate: false
+          description: ""
+          sortKey: -1790837418612
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: >-
+            { "title": "How Blockchain Security Actually Works",
+             "slug": "how-blockchain-security-actually-works", 
+             "excerpt": "A practical look at the systems and assumptions that make blockchain networks secure.", 
+             "content": "Blockchain security is built from cryptography, consensus, economic incentives, and carefully designed smart contracts. this are things that we should take very serious because they are here to be the futire of money either we like it or not",
+             "status": "DRAFT",
+             "type": "PROJECT", 
+             "coverImage": "https://example.com/images/blockchain-security.jpg" }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post/drafts"
+        name: GET DRAFT POST
+        meta:
+          id: req_83b7a56d7d7648efacd24a0cd52cade7
+          created: 1790837423569
+          modified: 1790918773721
+          isPrivate: false
+          description: ""
+          sortKey: -1790837423569
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post/all"
+        name: GET ALL POSTS
+        meta:
+          id: req_1a35947f12bf416c8fa65878f2c6d1a3
+          created: 1790837428244
+          modified: 1790918868204
+          isPrivate: false
+          description: ""
+          sortKey: -1790837428244
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post/slug/how-blockchain-security-actually-works"
+        name: GET POST BY SLUG
+        meta:
+          id: req_c019001a4cea42b29aa80b6cbb164f36
+          created: 1790837477071
+          modified: 1790920500309
+          isPrivate: false
+          description: ""
+          sortKey: -1790837477071
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post/8e9c4498-5ab0-413f-a548-dc9e3cc7aaf7"
+        name: GET POST BY ID
+        meta:
+          id: req_c8797ad33ed24f479ed6c048bb015885
+          created: 1790837480670
+          modified: 1790920338099
+          isPrivate: false
+          description: ""
+          sortKey: -1790837480670
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post/8e9c4498-5ab0-413f-a548-dc9e3cc7aaf7"
+        name: DELETE POST
+        meta:
+          id: req_dd73c015ca3f4140985b2d6fb72d357e
+          created: 1790837716647
+          modified: 1790921136606
+          isPrivate: false
+          description: ""
+          sortKey: -1790835519004
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url.base_url }}/post"
+        name: GET ALL PUBLISHED POST
+        meta:
+          id: req_d8626ba5d17249c4b1b81a3811ba8187
+          created: 1790918791439
+          modified: 1790918850609
+          isPrivate: false
+          description: ""
+          sortKey: -1790837425906.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MGE5MGQ1Yy1hZWJmLTRkMzEtOTFkOS1iZjZlYzg1YzIzYmIiLCJlbWFpbCI6Im9sYXlpbmthYWRlYmlzaTI3QGdtYWlsLmNvbSIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3OTA5MTk3MzAsImV4cCI6MTc5MDk2MjkzMH0.zd_mp61DmKnsQ9xJyopecdT-dO3JxbqpLFcWHucxhNI
+  - name: USER
+    meta:
+      id: fld_f1a4b8326f7f4b83b3c2551dd38d920d
+      created: 1790835795791
+      modified: 1790919813023
+      sortKey: -1790835795791
+      description: ""
+    children:
+      - url: "{{ _.url }}/auth/register"
+        name: CREATE NEW USER
+        meta:
+          id: req_797b7704dc4d486cb598478075ba8107
+          created: 1790835042322
+          modified: 1790919156485
+          isPrivate: false
+          description: ""
+          sortKey: -1790835801333
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: ""
+        name: UPDATE USER
+        meta:
+          id: req_01927dc044014a84b0b48105436b827f
+          created: 1790835046072
+          modified: 1790919244345
+          isPrivate: false
+          description: ""
+          sortKey: -1790835800983
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/auth/:id"
+        name: DELETE USER
+        meta:
+          id: req_4b39cb2ec13c4b01b37509c672b02e8d
+          created: 1790835048681
+          modified: 1790919233829
+          isPrivate: false
+          description: ""
+          sortKey: -1790835800533
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: ""
+      - url: "{{ _.url }}/auth/login"
+        name: LOGIN
+        meta:
+          id: req_89af1be747c249f3ab49ffb422556252
+          created: 1790835051112
+          modified: 1790837370995
+          isPrivate: false
+          description: ""
+          sortKey: -1790835801233
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email":"olayinkaadebisi27@gmail.com",
+            	"password": "SecurePassword123!"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/logout/:id"
+        name: LOGOUT
+        meta:
+          id: req_a1f8062261724c22b6af4a2b5ec9e2fe
+          created: 1790835053676
+          modified: 1790919350943
+          isPrivate: false
+          description: ""
+          sortKey: -1790835801133
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: ""
+      - url: "{{ _.url }}/auth/forgot-password/"
+        name: FORGOT PASSWORD
+        meta:
+          id: req_70f234332673462cb9adc4c72c8e4a6c
+          created: 1790835056143
+          modified: 1790919475163
+          isPrivate: false
+          description: ""
+          sortKey: -1790835800933
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/auth/verify"
+        name: VERIFY EMAIL
+        meta:
+          id: req_7c081c3c575e451d90412dea98a49901
+          created: 1790835058817
+          modified: 1790919590945
+          isPrivate: false
+          description: ""
+          sortKey: -1790835800958
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/auth/verify"
+        name: RESEND VERIFICATION CODE
+        meta:
+          id: req_b5ff936464bb4d3094ac692ef7819b1e
+          created: 1790835061097
+          modified: 1790919609678
+          isPrivate: false
+          description: ""
+          sortKey: -1790835800945.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/auth/forgot-password"
+        name: RESET PASSWORD
+        meta:
+          id: req_1f4ef3dd6f9b42848668f70b95c10e1d
+          created: 1790835066201
+          modified: 1790919555032
+          isPrivate: false
+          description: ""
+          sortKey: -1790835800883
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/logout/"
+        name: LOGOUT ALL
+        meta:
+          id: req_b7a6a367524a4793adf599b578b0ec39
+          created: 1790835744333
+          modified: 1790919393708
+          isPrivate: false
+          description: ""
+          sortKey: -1790835801033
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MGE5MGQ1Yy1hZWJmLTRkMzEtOTFkOS1iZjZlYzg1YzIzYmIiLCJlbWFpbCI6Im9sYXlpbmthYWRlYmlzaTI3QGdtYWlsLmNvbSIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3OTA5MTk3MzAsImV4cCI6MTc5MDk2MjkzMH0.zd_mp61DmKnsQ9xJyopecdT-dO3JxbqpLFcWHucxhNI
+    environment:
+      url: http://localhost:3500
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_623170b25cf95edcf3aacd83eb4602cba67499e4
+    created: 1790834890937
+    modified: 1790919730928
+  cookies:
+    - id: 7b499c1c-6bff-4f4b-a7fd-0832b925948b
+      key: refresh_token
+      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MGE5MGQ1Yy1hZWJmLTRkMzEtOTFkOS1iZjZlYzg1YzIzYmIiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc5MDkxOTczMCwiZXhwIjoxNzkxNTI0NTMwfQ.M5Tlt4jquwQhtZxI8nWI9wuUIiG1KOmIqzfeaJkCZf0
+      domain: localhost
+      path: /
+      secure: false
+      httpOnly: true
+      hostOnly: true
+environments:
+  name: Base Environment
+  meta:
+    id: env_623170b25cf95edcf3aacd83eb4602cba67499e4
+    created: 1790834890936
+    modified: 1790836981686
+    isPrivate: false
+  data:
+    url:
+      base_url: http://localhost:3500

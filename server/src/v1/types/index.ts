@@ -49,13 +49,3 @@ export interface AuthenticatedRequest extends Request {
   user?: UserAuth;
 }
 
-export const publicUserSelect = {
-  id: true,
-  firstname: true,
-  lastname: true,
-  email: true,
-  role: true,
-  is_verified: true,
-  createdAt: true,
-  updatedAt: true
-};

@@ -51,8 +51,9 @@ export interface CreatePostInput {
   slug: string;
   excerpt?: string;
   content: string;
-
+  readTime?: number | null;
   status?: PostStatus;
+  publishedAt?: Date | null;
   type: PostType;
 
   coverImage?: string;
@@ -76,9 +77,10 @@ export interface UpdatePostInput {
   slug?: string;
   excerpt?: string;
   content?: string;
-
+  readTime?: number | null;
   status?: PostStatus;
   type?: PostType;
+  publishedAt?: Date | null;
 
   coverImage?: string | null;
 

@@ -1,4 +1,4 @@
-import { CreatePostInput, PostType, UpdatePostInput, GetPostsInput } from "../types/post";
+import { CreatePostInput, UpdatePostInput, GetPostsInput } from "../types/post";
 
 import { prisma } from "../lib/prisma";
 

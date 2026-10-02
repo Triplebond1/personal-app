@@ -151,7 +151,7 @@ export default function NowPage() {
           This page changes as my priorities change. For the longer-term
           picture, see my{" "}
           <a
-            href="/about_me"
+            href="/about-me"
             className="font-medium text-neutral-900 underline underline-offset-4"
           >
             about page

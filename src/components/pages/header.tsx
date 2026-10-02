@@ -62,7 +62,7 @@ export const Header = () => {
             </Link>
 
             <Link
-              href="/about_me"
+              href="/about-me"
               className="transition hover:text-zinc-950"
             >
               About
@@ -78,7 +78,7 @@ export const Header = () => {
 
           {/* Desktop CTA */}
           <Link
-            href="/work_with_me"
+            href="/work-with-me"
             className="hidden rounded-full bg-zinc-950 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 md:block"
           >
             Work with me
@@ -156,7 +156,7 @@ export const Header = () => {
               </Link>
 
               <Link
-                href="/about_me"
+                href="/about-me"
                 onClick={closeMenu}
                 className="border-b border-zinc-100 py-4 text-sm text-zinc-700 transition hover:text-zinc-950"
               >
@@ -172,7 +172,7 @@ export const Header = () => {
               </Link>
 
               <Link
-                href="/work_with_me"
+                href="/work-with-me"
                 onClick={closeMenu}
                 className="mt-5 rounded-full bg-zinc-950 px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-zinc-800"
               >
