@@ -1,36 +1,9 @@
+
 import Link from "next/link";
+
 import { PostCard } from "../components/postCard";
 import { ProjectCard } from "../components/projectCard";
-
-const posts = [
-  {
-    category: "SMART CONTRACT SECURITY",
-    title: "Signature Replay Attacks",
-    description:
-      "Understanding how valid signatures can become dangerous when protocols fail to bind them to the right context.",
-    date: "Aug 28, 2026",
-    readTime: "12 min read",
-    slug: "signature-replay-attacks",
-  },
-  {
-    category: "EVM",
-    title: "What Actually Happens When msg.sender.call() Executes?",
-    description:
-      "A deeper look at calls, execution context, and what really happens inside the EVM.",
-    date: "Aug 26, 2026",
-    readTime: "15 min read",
-    slug: "msg-sender-call",
-  },
-  {
-    category: "SMART CONTRACT SECURITY",
-    title: "Delegatecall: Code Executing With Someone Else's Storage",
-    description:
-      "Understanding delegatecall, storage context, and how seemingly harmless architecture can become dangerous.",
-    date: "Aug 20, 2026",
-    readTime: "18 min read",
-    slug: "delegatecall",
-  },
-];
+import { getPublishedPosts } from "../service/post";
 
 const projects = [
   {
@@ -53,14 +26,39 @@ const research = [
   "What does trustworthy digital infrastructure look like in emerging markets?",
 ];
 
-export default function Home() {
+export default async function Home() {
+  let posts: any[] = [];
+
+  try {
+  const response = await getPublishedPosts();
+
+  posts = response.data.posts.slice(0, 3).map((post) => ({
+  slug: post.slug,
+  title: post.title,
+  description:
+    post.excerpt ??
+    "A technical exploration of blockchain, security and digital infrastructure.",
+  category: post.categories && post.categories.length > 0 ? post.categories.map((category) => category.name).join(" · "): "WRITING",
+  date: new Date(post.createdAt).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }),
+  readTime: post.readTime
+    ? `${post.readTime} min read`
+    : "",
+}));
+  } catch (error) {
+    console.error("Failed to load homepage posts:", error);
+  }
+
   return (
     <div>
-     
 
       {/* HERO */}
       <section className="mx-auto max-w-6xl px-6 pb-28 pt-28 md:pb-36 md:pt-36">
         <div className="max-w-4xl">
+
           <p className="mb-6 text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
             Blockchain Engineer · Security Researcher · Sciencepreneur
           </p>
@@ -77,7 +75,7 @@ export default function Home() {
 
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              href="/writing"
+              href="/writings"
               className="rounded-full bg-zinc-950 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
             >
               Read my writing →
@@ -90,6 +88,7 @@ export default function Home() {
               Work with me
             </Link>
           </div>
+
         </div>
       </section>
 
@@ -97,6 +96,7 @@ export default function Home() {
       <section className="border-y border-zinc-200 bg-zinc-50">
         <div className="mx-auto max-w-6xl px-6 py-16">
           <div className="grid gap-8 md:grid-cols-[180px_1fr]">
+
             <p className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
               Currently
             </p>
@@ -114,13 +114,16 @@ export default function Home() {
                 What I&apos;m working on now →
               </Link>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* WRITING */}
       <section className="mx-auto max-w-6xl px-6 py-24">
+
         <div className="mb-12 flex items-end justify-between gap-6">
+
           <div>
             <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-zinc-400">
               Writing
@@ -132,33 +135,46 @@ export default function Home() {
           </div>
 
           <Link
-            href="/writing"
+            href="/writings"
             className="hidden whitespace-nowrap text-sm font-medium underline underline-offset-4 md:block"
           >
             Read all writing →
           </Link>
+
         </div>
 
         <div className="divide-y divide-zinc-200 border-y border-zinc-200">
-          {posts.map((post) => (
-            <PostCard key={post.slug} post={post} />
-          ))}
+
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <PostCard
+                key={post.slug}
+                post={post}
+              />
+            ))
+          ) : (
+            <div className="py-16 text-center text-sm text-zinc-400">
+              No writings published yet.
+            </div>
+          )}
+
         </div>
 
         <Link
-          href="/writing"
+          href="/writings"
           className="mt-8 inline-block text-sm font-medium underline underline-offset-4 md:hidden"
         >
           Read all writing →
         </Link>
+
       </section>
-
-
 
       {/* PROJECTS */}
       <section className="border-y border-zinc-200 bg-zinc-950 text-white">
         <div className="mx-auto max-w-6xl px-6 py-24">
+
           <div className="mb-12 max-w-2xl">
+
             <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-zinc-500">
               Projects
             </p>
@@ -171,11 +187,15 @@ export default function Home() {
               Projects where engineering, security and real-world problems
               meet.
             </p>
+
           </div>
 
           <div className="grid gap-px overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-800 md:grid-cols-2">
             {projects.map((project) => (
-              <ProjectCard key={project.title} project={project} />
+              <ProjectCard
+                key={project.title}
+                project={project}
+              />
             ))}
           </div>
 
@@ -185,14 +205,15 @@ export default function Home() {
           >
             Explore all projects →
           </Link>
+
         </div>
       </section>
 
-
-
       {/* RESEARCH */}
       <section className="mx-auto max-w-6xl px-6 py-24">
+
         <div className="grid gap-12 md:grid-cols-[1fr_2fr]">
+
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
               Research
@@ -204,6 +225,7 @@ export default function Home() {
           </div>
 
           <div className="divide-y divide-zinc-200 border-y border-zinc-200">
+
             {research.map((question, index) => (
               <Link
                 href="/research"
@@ -211,7 +233,7 @@ export default function Home() {
                 className="group flex gap-6 py-7"
               >
                 <span className="font-mono text-sm text-zinc-400">
-                  0{index + 1}
+                  {String(index + 1).padStart(2, "0")}
                 </span>
 
                 <p className="text-xl leading-8 tracking-tight transition group-hover:text-zinc-500">
@@ -219,14 +241,19 @@ export default function Home() {
                 </p>
               </Link>
             ))}
+
           </div>
+
         </div>
+
       </section>
 
       {/* NOW */}
       <section className="border-y border-zinc-200 bg-zinc-50">
         <div className="mx-auto max-w-6xl px-6 py-20">
+
           <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+
             <div>
               <p className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
                 Now
@@ -249,13 +276,17 @@ export default function Home() {
             >
               Visit my Now page →
             </Link>
+
           </div>
+
         </div>
       </section>
 
       {/* WORK WITH ME */}
       <section className="mx-auto max-w-6xl px-6 py-28">
+
         <div className="max-w-3xl">
+
           <p className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
             Work together
           </p>
@@ -294,18 +325,11 @@ export default function Home() {
           >
             Let&apos;s talk →
           </Link>
+
         </div>
+
       </section>
 
-     
     </div>
   );
 }
-
-
-
-
-
-
-
-

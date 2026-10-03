@@ -389,7 +389,7 @@ export default function NewPostPage() {
 
               <div className="mt-4 flex items-center rounded-lg border border-zinc-300">
                 <span className="pl-3 text-sm text-zinc-400">
-                  /writing/
+                  /writings/
                 </span>
 
                 <input

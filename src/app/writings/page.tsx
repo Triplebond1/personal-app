@@ -1,76 +1,145 @@
 
-import Link from "next/link";
+"use client";
 
-const posts = [
-  {
-    slug: "signature-replay-attacks",
-    category: "SMART CONTRACT SECURITY",
-    title: "Signature Replay Attacks",
-    description:
-      "Understanding how a valid signature can become dangerous when a protocol fails to bind it to the right context.",
-    date: "Aug 28, 2026",
-    readTime: "12 min read",
-  },
-  {
-    slug: "what-happens-when-call-executes",
-    category: "EVM",
-    title: "What Actually Happens When msg.sender.call() Executes?",
-    description:
-      "A deeper look at calls, execution context, msg.sender and what really happens when one contract calls another.",
-    date: "Aug 26, 2026",
-    readTime: "15 min read",
-  },
-  {
-    slug: "delegatecall",
-    category: "SMART CONTRACT SECURITY",
-    title: "Delegatecall: Code Executing With Someone Else's Storage",
-    description:
-      "Understanding delegatecall, storage context and how architectural assumptions can become security vulnerabilities.",
-    date: "Aug 20, 2026",
-    readTime: "18 min read",
-  },
-  {
-    slug: "storage-collision",
-    category: "SMART CONTRACT SECURITY",
-    title: "Storage Collision in Upgradeable Contracts",
-    description:
-      "How proxy contracts can accidentally overwrite storage and why understanding EVM storage layout matters.",
-    date: "Aug 17, 2026",
-    readTime: "14 min read",
-  },
-  {
-    slug: "oracle-manipulation",
-    category: "DEFI SECURITY",
-    title: "Oracle Manipulation",
-    description:
-      "How protocols that depend on manipulable price data can be exploited and how security researchers identify the risk.",
-    date: "Aug 12, 2026",
-    readTime: "16 min read",
-  },
-  {
-    slug: "precision-loss",
-    category: "SMART CONTRACT SECURITY",
-    title: "Precision Loss in Smart Contracts",
-    description:
-      "Why integer division and rounding can quietly create exploitable economic vulnerabilities.",
-    date: "Aug 10, 2026",
-    readTime: "13 min read",
-  },
-];
+import { getPosts } from "@/src/service/post";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getPublishedPosts } from "../../service/post";
+
+// const posts = [
+//   {
+//     slug: "signature-replay-attacks",
+//     category: "SMART CONTRACT SECURITY",
+//     title: "Signature Replay Attacks",
+//     description:
+//       "Understanding how a valid signature can become dangerous when a protocol fails to bind it to the right context.",
+//     date: "Aug 28, 2026",
+//     readTime: "12 min read",
+//   },
+//   {
+//     slug: "what-happens-when-call-executes",
+//     category: "EVM",
+//     title: "What Actually Happens When msg.sender.call() Executes?",
+//     description:
+//       "A deeper look at calls, execution context, msg.sender and what really happens when one contract calls another.",
+//     date: "Aug 26, 2026",
+//     readTime: "15 min read",
+//   },
+//   {
+//     slug: "delegatecall",
+//     category: "SMART CONTRACT SECURITY",
+//     title: "Delegatecall: Code Executing With Someone Else's Storage",
+//     description:
+//       "Understanding delegatecall, storage context and how architectural assumptions can become security vulnerabilities.",
+//     date: "Aug 20, 2026",
+//     readTime: "18 min read",
+//   },
+//   {
+//     slug: "storage-collision",
+//     category: "SMART CONTRACT SECURITY",
+//     title: "Storage Collision in Upgradeable Contracts",
+//     description:
+//       "How proxy contracts can accidentally overwrite storage and why understanding EVM storage layout matters.",
+//     date: "Aug 17, 2026",
+//     readTime: "14 min read",
+//   },
+//   {
+//     slug: "oracle-manipulation",
+//     category: "DEFI SECURITY",
+//     title: "Oracle Manipulation",
+//     description:
+//       "How protocols that depend on manipulable price data can be exploited and how security researchers identify the risk.",
+//     date: "Aug 12, 2026",
+//     readTime: "16 min read",
+//   },
+//   {
+//     slug: "precision-loss",
+//     category: "SMART CONTRACT SECURITY",
+//     title: "Precision Loss in Smart Contracts",
+//     description:
+//       "Why integer division and rounding can quietly create exploitable economic vulnerabilities.",
+//     date: "Aug 10, 2026",
+//     readTime: "13 min read",
+//   },
+// ];
+
+// const categories = [
+//   "All",
+//   "Security",
+//   "EVM",
+//   "Blockchain",
+//   "Research",
+//   "Ideas",
+// ];
+
+
+
 
 const categories = [
   "All",
-  "Security",
-  "EVM",
+  "Cybersecurity",
   "Blockchain",
+  "Engineering",
   "Research",
   "Ideas",
 ];
 
+type WritingPost = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  category: string;
+  date: string;
+  readTime: string;
+};
+
 export default function WritingPage() {
+  const [posts, setPosts] = useState<WritingPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await getPublishedPosts({ type: "WRITING" });
+
+        const formattedPosts: WritingPost[] = response.data.posts.map((post) => ({
+          id: post.id,
+          slug: post.slug,
+          title: post.title,
+          description: post.excerpt,
+          category:
+            post.categories?.[0]?.name ??
+            post.type ??
+            "Writing",
+          date: new Date(post.createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }),
+          readTime: post.readTime
+            ? `${post.readTime} min read`
+            : "",
+        }));
+
+        setPosts(formattedPosts);
+      } catch (error) {
+        console.error("Failed to fetch published posts:", error);
+        setError("Unable to load writings.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-zinc-950">
-
 
       {/* PAGE INTRO */}
       <section className="mx-auto max-w-6xl px-6 pb-20 pt-24 md:pb-28 md:pt-32">
@@ -112,42 +181,67 @@ export default function WritingPage() {
       {/* POSTS */}
       <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
         <div className="divide-y divide-zinc-200 border-y border-zinc-200">
-          {posts.map((post) => (
-            <article key={post.slug}>
-              <Link
-                href={`/writings/${post.slug}`}
-                className="group block py-10"
-              >
-                <div className="grid gap-6 md:grid-cols-[180px_1fr_80px]">
-                  <div>
-                    <p className="text-xs font-semibold tracking-[0.15em] text-zinc-400">
-                      {post.category}
-                    </p>
-                  </div>
 
-                  <div>
-                    <h2 className="text-2xl font-medium tracking-tight transition-colors group-hover:text-zinc-500 md:text-3xl">
-                      {post.title}
-                    </h2>
+          {isLoading && (
+            <div className="py-16 text-center text-sm text-zinc-400">
+              Loading writings...
+            </div>
+          )}
 
-                    <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">
-                      {post.description}
-                    </p>
+          {!isLoading && error && (
+            <div className="py-16 text-center text-sm text-red-500">
+              {error}
+            </div>
+          )}
 
-                    <div className="mt-5 flex gap-3 text-sm text-zinc-400">
-                      <span>{post.date}</span>
-                      <span>·</span>
-                      <span>{post.readTime}</span>
+          {!isLoading && !error && posts.length === 0 && (
+            <div className="py-16 text-center text-sm text-zinc-400">
+              No writings published yet.
+            </div>
+          )}
+
+          {!isLoading &&
+            !error &&
+            posts.map((post) => (
+              <article key={post.id}>
+                <Link
+                  href={`/writings/${post.slug}`}
+                  className="group block py-10"
+                >
+                  <div className="grid gap-6 md:grid-cols-[180px_1fr_80px]">
+
+                    <div>
+                      <p className="text-xs font-semibold tracking-[0.15em] text-zinc-400">
+                        {post.category}
+                      </p>
                     </div>
-                  </div>
 
-                  <div className="hidden text-right text-2xl text-zinc-300 transition-colors group-hover:text-zinc-950 md:block">
-                    ↗
+                    <div>
+                      <h2 className="text-2xl font-medium tracking-tight transition-colors group-hover:text-zinc-500 md:text-3xl">
+                        {post.title}
+                      </h2>
+
+                      <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">
+                        {post.description}
+                      </p>
+
+                      <div className="mt-5 flex gap-3 text-sm text-zinc-400">
+                        <span>{post.date}</span>
+
+                        <span>·</span>
+
+                        <span>{post.readTime}</span>
+                      </div>
+                    </div>
+
+                    <div className="hidden text-right text-2xl text-zinc-300 transition-colors group-hover:text-zinc-950 md:block">
+                      ↗
+                    </div>
+
                   </div>
-                </div>
-              </Link>
-            </article>
-          ))}
+                </Link>
+              </article>
+            ))}
         </div>
       </section>
 

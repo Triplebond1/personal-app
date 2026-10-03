@@ -315,7 +315,7 @@ export default function AboutPage() {
               </Link>
 
               <Link
-                href="/writing"
+                href="/writings"
                 className="rounded-full border border-zinc-700 px-6 py-3 text-sm font-medium text-white transition hover:border-zinc-400"
               >
                 Read my writing

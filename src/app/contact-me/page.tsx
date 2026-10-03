@@ -124,7 +124,7 @@ export default function ContactPage() {
         </Link>
 
         <Link
-          href="/writing"
+          href="/writings"
           className="text-slate-600 hover:text-slate-900 hover:underline"
         >
           Read my writing →

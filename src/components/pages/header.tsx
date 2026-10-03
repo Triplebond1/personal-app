@@ -132,7 +132,7 @@ export const Header = () => {
             <div className="flex flex-col">
 
               <Link
-                href="/writing"
+                href="/writings"
                 onClick={closeMenu}
                 className="border-b border-zinc-100 py-4 text-sm text-zinc-700 transition hover:text-zinc-950"
               >

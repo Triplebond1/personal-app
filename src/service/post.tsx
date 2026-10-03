@@ -1,6 +1,6 @@
 
 import api  from "../lib/api";
-import { PostResponse, PostsResponse, GetPostsParams } from "../types/post";
+import { PostResponse, PostsResponse, GetPostsParams, Post } from "../types/post";
 
 
 function buildQueryParams(
@@ -42,8 +42,12 @@ function buildQueryParams(
  * PUBLIC
  */
 
-export async function getPublishedPosts(): Promise<PostsResponse> {
-  return api<PostsResponse>("/post", {
+export async function getPublishedPosts(
+  params: GetPostsParams = {}
+): Promise<PostsResponse> {
+  const query = buildQueryParams(params);
+
+  return api<PostsResponse>(`/post${query}`, {
     method: "GET",
   });
 }
@@ -127,8 +131,8 @@ export async function updatePost(
 export async function publishPost(
   id: string,
   accessToken: string
-): Promise<PostResponse> {
-  return api<PostResponse>(
+): Promise<Post> {
+  return api<Post>(
     `/post/${encodeURIComponent(id)}/publish`,
     {
       method: "PATCH",
@@ -140,8 +144,8 @@ export async function publishPost(
 export async function archivePost(
   id: string,
   accessToken: string
-): Promise<PostResponse> {
-  return api<PostResponse>(
+): Promise<Post> {
+  return api<Post>(
     `/post/${encodeURIComponent(id)}/archive`,
     {
       method: "PATCH",

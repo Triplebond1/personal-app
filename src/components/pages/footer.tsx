@@ -15,7 +15,7 @@ export const Footer = () => {
           </div>
 
           <div className="flex flex-wrap gap-6 text-sm text-zinc-500">
-            <Link href="/writing" className="hover:text-zinc-950">
+            <Link href="/writings" className="hover:text-zinc-950">
               Writing
             </Link>
             <Link href="/projects" className="hover:text-zinc-950">

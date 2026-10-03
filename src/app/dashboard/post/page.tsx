@@ -69,7 +69,7 @@ export default function PostsPage() {
                   </span>
 
                   <Link
-                    href={`/writing/${post.slug}`}
+                    href={`/writings/${post.slug}`}
                     className="text-sm font-medium hover:underline"
                   >
                     View
