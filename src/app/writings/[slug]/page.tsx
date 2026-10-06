@@ -21,16 +21,6 @@ type PostPageProps = {
   }>;
 };
 
-/**
- * Generate static pages for all published posts.
- */
-export async function generateStaticParams() {
-  const response = await getPublishedPosts();
-
-  return response.data.posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
 
 /**
  * Generate SEO metadata for each post.
@@ -41,11 +31,12 @@ export async function generateMetadata({
   const { slug } = await params;
 
   try {
-    const fetchedPost = await getPublishedPostBySlug(slug);
+    const response = await getPublishedPostBySlug(slug);
+    const post = response.data.post;
 
     return {
-      title: `${fetchedPost.data.post.title} | Olayinka`,
-      description: fetchedPost.data.post.excerpt ?? undefined,
+      title: `${post.title} | Olayinka`,
+      description: post.excerpt ?? undefined,
     };
   } catch {
     return {
@@ -62,24 +53,21 @@ export default async function PostPage({
 }: PostPageProps) {
   const { slug } = await params;
 
-  let fetchedPost;
+  let post;
 
   try {
-    fetchedPost = await getPublishedPostBySlug(slug);
+   const response = await getPublishedPostBySlug(slug);
+    post = response.data.post;
   } catch {
     notFound();
   }
 
-  if (!fetchedPost) {
+  if (!post) {
     notFound();
   }
 
-  // const category =
-  //   fetchedPost.post.categories?.[0]?.name ??
-  //   fetchedPost.post.type ??
-  //   "Writing";
 
-  const date = new Date(fetchedPost.data.post.createdAt).toLocaleDateString(
+  const date = new Date(post.createdAt).toLocaleDateString(
     "en-US",
     {
       year: "numeric",
@@ -105,26 +93,32 @@ export default async function PostPage({
           </Link>
 
           <p className="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
-            {fetchedPost.data.post.type === "WRITING" && "Writing"}
+            {post.type === "WRITING" && "Writing"}
           </p>
 
+         <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
+          {post.categories?.map((category) => (
+            <span key={category.name}>{category.name}</span>
+          ))}
+        </div>
+
           <h1 className="mt-5 text-5xl font-semibold leading-[1.05] tracking-[-0.04em] md:text-7xl">
-            {fetchedPost.data.post.title}
+            {post.title}
           </h1>
 
-          {fetchedPost.data.post.excerpt && (
+          {post.excerpt && (
             <p className="mt-7 text-xl leading-8 text-zinc-600">
-              {fetchedPost.data.post.excerpt}
+              {post.excerpt}
             </p>
           )}
 
           <div className="mt-8 flex gap-3 text-sm text-zinc-400">
             <span>{date}</span>
 
-            {fetchedPost.data.post.readTime && (
+            {post.readTime && (
               <>
                 <span>·</span>
-                <span>{fetchedPost.data.post.readTime} min read</span>
+                <span>{post.readTime} min read</span>
               </>
             )}
           </div>
@@ -173,7 +167,7 @@ export default async function PostPage({
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
               >
-                {fetchedPost.data.post.content}
+                {post.content}
               </ReactMarkdown>
             </article>
 

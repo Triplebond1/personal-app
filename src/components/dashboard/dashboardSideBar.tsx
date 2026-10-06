@@ -137,10 +137,10 @@ export default function DashboardSidebar() {
           </Link>
 
           <Link
-            href="/dashboard/posts/new"
+            href="/dashboard/post/newPost"
             onClick={closeSidebar}
             className={`block rounded-lg px-3 py-2 text-sm transition ${
-              isActive("/dashboard/posts/new")
+              isActive("/dashboard/post/newPost")
                 ? "bg-zinc-100 font-medium text-zinc-950"
                 : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
             }`}

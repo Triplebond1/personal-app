@@ -8,13 +8,17 @@ export type User = {
   email: string;
   role: string;
   is_verified: boolean;
+  access_token: string;
   createdAt: string;
   updatedAt: string;
-  access_token: string;
 };
 
 type AuthResponse = {
-  user: User;
+  success: boolean;
+  message: string;
+  data: {
+    user: User;
+  };
 };
 
 export async function login(

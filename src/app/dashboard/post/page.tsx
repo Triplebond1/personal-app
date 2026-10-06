@@ -37,7 +37,7 @@ export default function PostsPage() {
           </div>
 
           <Link
-            href="/dashboard/posts/new"
+           href="/dashboard/post/newPost"
             className="rounded-lg bg-zinc-950 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
           >
             New post

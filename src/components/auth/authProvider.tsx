@@ -1,4 +1,6 @@
+
 "use client";
+
 import {
   createContext,
   useContext,
@@ -22,12 +24,19 @@ type AuthContextType = {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register: (firstname: string, lastname: string, email: string, password: string) => Promise<void>;
+  register: (
+    firstname: string,
+    lastname: string,
+    email: string,
+    password: string
+  ) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
+
+const STORAGE_KEY = "auth_user";
 
 export function AuthProvider({
   children,
@@ -38,16 +47,63 @@ export function AuthProvider({
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  /**
+   * Save the authenticated user locally.
+   *
+   * The refresh token is NOT stored here.
+   * It should remain in the backend-managed HttpOnly cookie.
+   */
+  const persistUser = (user: User) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    setUser(user);
+  };
+
+  /**
+   * Clear all client-side authentication state.
+   */
+  const clearAuth = () => {
+    localStorage.removeItem(STORAGE_KEY);
+
+    setUser(null);
+    setAccessToken(null);
+  };
+
+  /**
+   * Restore authentication when the application starts.
+   */
   useEffect(() => {
     const restoreSession = async () => {
       try {
+        /*
+         * First restore the cached user so the application
+         * knows who the user is while the refresh request runs.
+         */
+        const storedUser = localStorage.getItem(STORAGE_KEY);
+
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+
+        /*
+         * Ask the backend whether the refresh-token session
+         * is still valid.
+         *
+         * The browser automatically sends the HttpOnly
+         * refresh-token cookie with this request.
+         */
         const response = await refreshSession();
 
-        setUser(response.user);
-        setAccessToken(response.user.access_token);
+        const refreshedUser = response.data.user;
+        const newAccessToken = response.data.user.access_token;
+
+        persistUser(refreshedUser);
+        setAccessToken(newAccessToken);
       } catch {
-        setUser(null);
-        setAccessToken(null);
+        /*
+         * The backend rejected the refresh token.
+         * The session has therefore expired or become invalid.
+         */
+        clearAuth();
       } finally {
         setIsLoading(false);
       }
@@ -56,40 +112,58 @@ export function AuthProvider({
     restoreSession();
   }, []);
 
+  /**
+   * Login.
+   */
   const login = async (
     email: string,
     password: string
   ): Promise<void> => {
     const response = await loginRequest(email, password);
 
-    setUser(response.user);
-    setAccessToken(response.user.access_token);
+    const loggedInUser = response.data.user;
+    const newAccessToken = response.data.user.access_token;
+
+    persistUser(loggedInUser);
+    setAccessToken(newAccessToken);
   };
 
+  /**
+   * Logout.
+   */
   const logout = async (): Promise<void> => {
     try {
       await logoutRequest();
     } finally {
-      setUser(null);
-      setAccessToken(null);
+      clearAuth();
     }
   };
 
+  /**
+   * Register.
+   */
   const register = async (
     firstname: string,
     lastname: string,
     email: string,
     password: string
   ): Promise<void> => {
-    
-      const response = await registerRequest(firstname, lastname, email, password);
-  
-    setUser(response.user);
-    setAccessToken(response.user.access_token);
+    const response = await registerRequest(
+      firstname,
+      lastname,
+      email,
+      password
+    );
 
+    const registeredUser = response.data.user;
+    const newAccessToken = response.data.user.access_token;
+
+    persistUser(registeredUser);
+    setAccessToken(newAccessToken);
   };
 
-  const isAuthenticated = !!user && !!accessToken;
+  const isAuthenticated =
+    !!user && !!accessToken;
 
   return (
     <AuthContext.Provider

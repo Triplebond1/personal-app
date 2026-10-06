@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PostCard } from "../components/postCard";
 import { ProjectCard } from "../components/projectCard";
 import { getPublishedPosts } from "../service/post";
+import { Post } from "../types/post";
 
 const projects = [
   {
@@ -32,14 +33,14 @@ export default async function Home() {
   try {
   const response = await getPublishedPosts();
 
-  posts = response.data.posts.slice(0, 3).map((post) => ({
+    posts = response.data.posts.slice(0, 3).map((post) => ({
   slug: post.slug,
   title: post.title,
   description:
     post.excerpt ??
     "A technical exploration of blockchain, security and digital infrastructure.",
   category: post.categories && post.categories.length > 0 ? post.categories.map((category) => category.name).join(" · "): "WRITING",
-  date: new Date(post.createdAt).toLocaleDateString("en-US", {
+    createdAt: new Date(post.createdAt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",

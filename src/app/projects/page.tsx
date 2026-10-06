@@ -1,5 +1,8 @@
-
+"use client";
+import Post from "@/server/src/v1/route/Post";
+import { getPublishedPosts } from "@/src/service/post";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
  export const projects = [
   {
@@ -26,11 +29,62 @@ import Link from "next/link";
     status: "Concept",
     tags: ["Software", "Commerce", "Infrastructure"],
   },
-];
+ ];
+
+ type ProjectPost = {
+  title: string;
+  slug: string;
+  description: string;
+   status: string;
+  categories: string[];
+   tags: string[];
+  
+ };
 
 export default function ProjectsPage() {
+  const [posts, setPosts] = useState<ProjectPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await getPublishedPosts({ type: "PROJECT" });
+
+  
+
+        if (!response.success) {
+          throw new Error("Failed to fetch project posts");
+        }
+      const formattedPosts: ProjectPost[] = response.data.posts.map((post) => ({
+        title: post.title,
+        slug: post.slug,
+        description: post.excerpt ?? "",
+        status: post.status,
+        categories: post.categories?.map((category) => category.name) ?? [],
+        tags: post.tags?.map((tag) => tag.name) ?? [],
+      }));
+
+      setPosts(formattedPosts);
+      } catch (err) {
+      console.error("Failed to fetch published posts:", error);
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+    fetchPosts();
+  }, []);
+
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-20">
+
+      
       <div className="max-w-2xl">
         <p className="mb-4 text-sm font-medium text-neutral-500">
           Projects
@@ -47,7 +101,28 @@ export default function ProjectsPage() {
       </div>
 
       <section className="mt-16 grid gap-6 md:grid-cols-2">
-        {projects.map((project) => (
+
+        {isLoading && (
+            <div className="py-16 text-center text-sm text-zinc-400">
+              Loading projects...
+            </div>
+          )}
+
+          {!isLoading && error && (
+            <div className="py-16 text-center text-sm text-red-500">
+              {error}
+            </div>
+          )}
+
+          {!isLoading && !error && posts.length === 0 && (
+            <div className="py-16 text-center text-sm text-zinc-400">
+              No projects published yet.
+            </div>
+        )}
+
+
+        {!isLoading && !error && posts.map((project) => (
+         
           <Link
             key={project.slug}
             href={`/projects/${project.slug}`}
@@ -79,10 +154,14 @@ export default function ProjectsPage() {
                 >
                   {tag}
                 </span>
-              ))}
+              ))
+
+              }
             </div>
           </Link>
-        ))}
+        ))} 
+
+        
       </section>
     </div>
   );

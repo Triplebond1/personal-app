@@ -7,6 +7,7 @@ export type Post = {
   title: string;
   slug: string;
   content: string;
+  excerpt: string | null;
   published: boolean;
   status: PostStatus;
   type: PostType;
@@ -39,11 +40,19 @@ export type Post = {
 };
 
 export type PostResponse = {
-  post: Post;
+  success: boolean;
+  message: string;
+  data: {
+    post: Post;
+  };
 };
 
 export type PostsResponse = {
-  posts: Post[];
+  success: boolean;
+  message: string;
+  data: {
+    posts: Post[];
+  };
 };
 
 export type GetPostsParams = {

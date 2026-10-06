@@ -1,5 +1,7 @@
-
+"use client";
+import { getPublishedPosts } from "@/src/service/post";
 import Link from "next/link";
+import { useState, useEffect} from "react";
 
 const research = [
   {
@@ -27,8 +29,52 @@ const research = [
     topics: ["DeFi", "Security", "Protocol Design"],
   },
 ];
+type ResearchPost = {
+  title: string;
+  slug: string;
+  description: string;
+  status: string;
+  categories: string[];
+};
 
 export default function ResearchPage() {
+
+  const [posts, setPosts] = useState<ResearchPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await getPublishedPosts({ type: "RESEARCH" });
+
+        if (!response.success) {
+          throw new Error("Failed to fetch research posts");
+        }
+      const formattedPosts: ResearchPost[] = response.data.posts.map((post) => ({
+        title: post.title,
+        slug: post.slug,
+        description: post.excerpt ?? "",
+        status: post.status,
+        categories: post.categories?.map((category) => category.name) ?? [],
+      }));
+
+      setPosts(formattedPosts);
+      } catch (err) {
+      console.error("Failed to fetch published posts:", error);
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+    fetchPosts();
+  }, []);
+
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-20">
       <div className="max-w-2xl">
@@ -48,7 +94,26 @@ export default function ResearchPage() {
       </div>
 
       <section className="mt-16 space-y-6">
-        {research.map((item) => (
+          {isLoading && (
+            <div className="py-16 text-center text-sm text-zinc-400">
+              Loading writings...
+            </div>
+          )}
+
+          {!isLoading && error && (
+            <div className="py-16 text-center text-sm text-red-500">
+              {error}
+            </div>
+          )}
+
+          {!isLoading && !error && posts.length === 0 && (
+            <div className="py-16 text-center text-sm text-zinc-400">
+              No writings published yet.
+            </div>
+        )}
+
+          
+        {!isLoading && !error && posts.map((item) => (
           <Link
             key={item.slug}
             href={`/researchs/${item.slug}`}
@@ -73,12 +138,12 @@ export default function ResearchPage() {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              {item.topics.map((topic) => (
+              {item.categories.map((category) => (
                 <span
-                  key={topic}
+                  key={category}
                   className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-600"
                 >
-                  {topic}
+                  {category}
                 </span>
               ))}
             </div>

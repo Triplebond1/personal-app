@@ -13,9 +13,11 @@ export default function DashboardGuard({
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.replace("/login");
-    }
+  if (isLoading) return;
+
+  if (!isAuthenticated) {
+    router.replace("/login");
+  }
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading) {
@@ -34,3 +36,5 @@ export default function DashboardGuard({
 
   return <>{children}</>;
 }
+
+
