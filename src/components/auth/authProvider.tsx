@@ -47,20 +47,15 @@ export function AuthProvider({
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  /**
-   * Save the authenticated user locally.
-   *
-   * The refresh token is NOT stored here.
-   * It should remain in the backend-managed HttpOnly cookie.
-   */
+  // Persist the authenticated user to local storage and state.
+
   const persistUser = (user: User) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
     setUser(user);
   };
 
-  /**
-   * Clear all client-side authentication state.
-   */
+  //Clear the authenticated user from local storage and state.
+
   const clearAuth = () => {
     localStorage.removeItem(STORAGE_KEY);
 
@@ -68,29 +63,24 @@ export function AuthProvider({
     setAccessToken(null);
   };
 
-  /**
-   * Restore authentication when the application starts.
-   */
+  // Restore the authenticated user from local storage and refresh the session.
+
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        /*
-         * First restore the cached user so the application
-         * knows who the user is while the refresh request runs.
-         */
+  // Retrieve the user from local storage.
+  //  when a user refreshes the page, 
+  // we want to restore their session if possible.
+
         const storedUser = localStorage.getItem(STORAGE_KEY);
 
         if (storedUser) {
           setUser(JSON.parse(storedUser));
         }
 
-        /*
-         * Ask the backend whether the refresh-token session
-         * is still valid.
-         *
-         * The browser automatically sends the HttpOnly
-         * refresh-token cookie with this request.
-         */
+        // ask the backend whether the refresh-token session is still valid.
+        //the browser automatically sends the HttpOnly refresh-token cookie with this request.
+
         const response = await refreshSession();
 
         const refreshedUser = response.data.user;
@@ -99,10 +89,10 @@ export function AuthProvider({
         persistUser(refreshedUser);
         setAccessToken(newAccessToken);
       } catch {
-        /*
-         * The backend rejected the refresh token.
-         * The session has therefore expired or become invalid.
-         */
+
+        //the backend rejected the refresh token.
+        //The session has therefore expired or become invalid.
+
         clearAuth();
       } finally {
         setIsLoading(false);
@@ -112,9 +102,10 @@ export function AuthProvider({
     restoreSession();
   }, []);
 
-  /**
-   * Login.
-   */
+  /////////////////////////////
+  // LOGIN
+  /////////////////////////////
+
   const login = async (
     email: string,
     password: string
@@ -128,9 +119,10 @@ export function AuthProvider({
     setAccessToken(newAccessToken);
   };
 
-  /**
-   * Logout.
-   */
+  /////////////////////////////
+  // LOGOUT
+  /////////////////////////////
+
   const logout = async (): Promise<void> => {
     try {
       await logoutRequest();
@@ -139,9 +131,10 @@ export function AuthProvider({
     }
   };
 
-  /**
-   * Register.
-   */
+  /////////////////////////////
+  // REGISTER
+  /////////////////////////////
+
   const register = async (
     firstname: string,
     lastname: string,
@@ -193,3 +186,4 @@ export function useAuth() {
 
   return context;
 }
+

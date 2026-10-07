@@ -9,6 +9,7 @@ import sendMail from '../utils/sendMail';
 import DeviceService from '../services/DeviceServices';
 import { getDatTimeUTC } from '../utils/functions';
 import { forgotPasswordMail, generateNewDeviceLoginMail, generateNewUserMail,generatePasswordResetMail,generateVerificationRequest,generateVerificationSuccessMail } from "../utils/generateMail";
+import { generateNewAccessToken, generateNewRefreshToken, generatePasswordResetToken, generateVerificationToken } from "../lib/helpers";
 
 
 class AuthController {
@@ -72,16 +73,7 @@ class AuthController {
     try {
       const hashPassword = await hash(password);
 
-      const verificationToken = sign(
-        {
-          email: normalizedEmail,
-          purpose: "email_verification",
-        },
-        process.env.EMAIL_VERIFICATION_SECRET!,
-        {
-          expiresIn: "1h",
-        }
-      );
+      const verificationToken = generateVerificationToken(normalizedEmail);
 
       const newUser: NewUser = {
         firstname: firstName,
@@ -193,32 +185,13 @@ class AuthController {
       // Short-lived access token.
       
 
-      const access_token = sign(
-        {
-          sub: foundUser.id,
-           email: foundUser.email,
-          type: "access",
-        },
-        process.env.ACCESS_TOKEN_SECRET!,
-        {
-          expiresIn: "12h",
-        }
-      );
+      const access_token =   generateNewAccessToken(foundUser);
 
 
       // Longer-lived refresh token.
       
 
-      const new_refresh_token = sign(
-        {
-          sub: foundUser.id,
-          type: "refresh",
-        },
-        process.env.REFRESH_TOKEN_SECRET!,
-        {
-          expiresIn: "7d",
-        }
-      );
+      const new_refresh_token =  generateNewRefreshToken(foundUser);
 
       const userAgent =
         req.headers["user-agent"] || "Unknown";
@@ -455,17 +428,7 @@ class AuthController {
         );
       }
 
-      const verificationToken =
-        sign(
-          {
-            email: normalizedEmail,
-            purpose: "email_verification",
-          },
-          process.env.EMAIL_VERIFICATION_SECRET!,
-          {
-            expiresIn: "1h",
-          }
-        );
+      const verificationToken = generateVerificationToken(normalizedEmail);
 
       foundUser.verification_code =
         verificationToken;
@@ -554,17 +517,7 @@ class AuthController {
           normalizedEmail
         );
 
-      const resetToken =
-        sign(
-          {
-            email: normalizedEmail,
-            purpose: "password_reset",
-          },
-          process.env.PASSWORD_RESET_SECRET!,
-          {
-            expiresIn: "15m",
-          }
-        );
+      const resetToken = generatePasswordResetToken(normalizedEmail);
 
   
       foundUser.reset_password_token =

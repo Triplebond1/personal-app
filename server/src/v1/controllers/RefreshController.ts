@@ -8,6 +8,7 @@ import UserService from '../services/UserService';
 import DeviceService from '../services/DeviceServices';
 import { sendErrorResponse, sendSuccessResponse } from "../utils/responseHelper";
 import "dotenv/config";
+import { generateNewAccessToken, generateNewRefreshToken } from '../lib/helpers';
 
 class RefreshController{
   private user: UserService;
@@ -40,21 +41,10 @@ class RefreshController{
 
       if (foundUser.id !== decoded.sub) return sendErrorResponse(res,403,"Forbidden");
 
-      const access_token = sign(
-        { id: foundUser.id, email: foundUser.email },
-        process.env.ACCESS_TOKEN_SECRET as string,
-        {
-          expiresIn: "1h"
-        }
-      );
+      const access_token = generateNewAccessToken(foundUser);
 
-      const new_refresh_token = sign(
-        { id: foundUser.id, email: foundUser.email },
-        process.env.REFRESH_TOKEN_SECRET as string,
-        {
-          expiresIn: "7d"
-        }
-      );
+        const new_refresh_token = generateNewRefreshToken(foundUser);
+
 
       const token = foundUser.refresh_token.filter((refresh: any) => refresh !== oldToken);
       foundUser.refresh_token = [...token, new_refresh_token];

@@ -85,9 +85,11 @@ class App {
   };
 
   private initializeRoutes = (): void => {
-    /*
-     * Public authentication routes
-     */
+
+    ////////////////////////////////
+    // PUBLIC API routes
+    ////////////////////////////////
+
     this.app.use("/auth", authRoute);
 
     this.app.use("/refresh", refreshRoute);
@@ -96,40 +98,27 @@ class App {
 
     this.app.use("/post", postRoute);
 
-    /*
-     * Protected API routes
-     *
-     */
+    ////////////////////////////////
+    // PROTECTED API routes
+    ////////////////////////////////
+
     this.app.use("/api", authenticate);
 
-    /*
-     * Example protected route
-     */
-    this.app.get(
-      "/api/health",
-      (req: Request, res: Response) => {
-        res.status(200).json({
-          status: "success",
-          message: "Personal website API is running",
-        });
-      }
-    );
+    ////////////////////////////////////////////////
+    // CATCH ALL ROUTE FOR NEXT.JS FRONTEND
+    ////////////////////////////////////////////////
 
-    /*
-     * Next.js frontend
-     *
-     * Everything that wasn't handled by Express
-     * is passed to Next.js.
-     */
     // this.app.all("/{*splat}", (req: Request, res: Response) => {
     //   return handle(req, res);
     // });
   };
 
   public listen = async (port: number): Promise<void> => {
-    /*
-     * Prepare Next.js before starting Express.
-     */
+
+    //////////////////////////////////////////////////
+    // PREPARE NEXT.JS FRONTEND
+    //////////////////////////////////////////////////
+    
     // await nextApp.prepare();
 
     this.app.listen(port, () => {

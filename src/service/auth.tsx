@@ -21,6 +21,10 @@ type AuthResponse = {
   };
 };
 
+///////////////////////////////////
+// LOGIN
+///////////////////////////////////
+
 export async function login(
   email: string,
   password: string
@@ -37,6 +41,11 @@ export async function login(
     }),
   });
 }
+
+
+//////////////////////////////
+// REGISTER
+//////////////////////////////
 
 export async function register(
   firstname: string,
@@ -55,11 +64,22 @@ export async function register(
   });
 }
 
+///////////////////////////////
+// REFRESH SESSION
+///////////////////////////////
+
 export async function refreshSession(): Promise<AuthResponse> {
   return api<AuthResponse>("/refresh", {
     method: "GET",
   });
 }
+
+
+
+
+///////////////////////////////
+// LOGOUT
+///////////////////////////////
 
 export async function logout(): Promise<void> {
   await api("/logout", {

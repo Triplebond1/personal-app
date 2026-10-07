@@ -66,6 +66,10 @@ class LogoutController {
     }
   };
 
+  /////////////////////////////
+  //LOGOUT ALL DEVICES
+  /////////////////////////////
+
   public logoutAll = async (req: Request, res: Response) => {
     const { id }: { id?: string }  = req.params;
     if (!id) return sendErrorResponse(res, 400, "User Id is required");
