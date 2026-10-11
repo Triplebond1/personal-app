@@ -1,12 +1,14 @@
 
+
 "use client";
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
-  ReactNode,
+  type ReactNode,
 } from "react";
 
 import {
@@ -14,7 +16,7 @@ import {
   logout as logoutRequest,
   register as registerRequest,
   refreshSession,
-  User,
+  type User,
 } from "../../service/auth";
 
 type AuthContextType = {
@@ -22,8 +24,10 @@ type AuthContextType = {
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+
   register: (
     firstname: string,
     lastname: string,
@@ -38,6 +42,7 @@ const AuthContext = createContext<AuthContextType | undefined>(
 
 const STORAGE_KEY = "auth_user";
 
+
 export function AuthProvider({
   children,
 }: {
@@ -47,64 +52,118 @@ export function AuthProvider({
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Persist the authenticated user to local storage and state.
+  ////////////////////////////////////////////////////////
+  //save the user profile for convenient UI restorate
+  //the accessToken is deliberatly not saved locally 
+  ///////////////////////////////////////////////////////
 
-  const persistUser = (user: User) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    setUser(user);
-  };
+  const persistUser = useCallback((authenticatedUser: User) => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(authenticatedUser)
+    );
 
-  //Clear the authenticated user from local storage and state.
+    setUser(authenticatedUser);
+  }, []);
 
-  const clearAuth = () => {
+
+  ///////////////////////////////////////////////////
+  //Update the access token in react state only
+  //////////////////////////////////////////////////
+
+  const persistAccessToken = useCallback((token: string) => {
+    setAccessToken(token);
+  }, []);
+
+
+  //////////////////////////////////////////////
+  //Clear the current authentication state
+  //////////////////////////////////////////////
+
+  const clearAuth = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
 
     setUser(null);
     setAccessToken(null);
-  };
+  }, []);
 
-  // Restore the authenticated user from local storage and refresh the session.
+  ////////////////////////////////////////////////////////////////////////
+  //restore the session when the application starts
+  //the backend must validate the refresh-token session
+  ///////////////////////////////////////////////////////////////////////
+
 
   useEffect(() => {
+    let cancelled = false;
+
     const restoreSession = async () => {
       try {
-  // Retrieve the user from local storage.
-  //  when a user refreshes the page, 
-  // we want to restore their session if possible.
+        console.log("Restoring session...");
 
+        // Load the cached profile for UI convenience.
         const storedUser = localStorage.getItem(STORAGE_KEY);
 
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          try {
+            const parsedUser = JSON.parse(storedUser) as User;
+
+            if (!cancelled) {
+              setUser(parsedUser);
+            }
+          } catch {
+            localStorage.removeItem(STORAGE_KEY);
+          }
         }
 
-        // ask the backend whether the refresh-token session is still valid.
-        //the browser automatically sends the HttpOnly refresh-token cookie with this request.
+        console.log("Attempting to refresh session...", storedUser);
+
+        /////////////////////////////////////////////////////////////
+        // The browser sends the refresh-token cookie when eligible.
+        /////////////////////////////////////////////////////////////
 
         const response = await refreshSession();
 
+        if (cancelled) {
+          return;
+        }
+
         const refreshedUser = response.data.user;
-        const newAccessToken = response.data.user.access_token;
+        const newAccessToken = response.data.accessToken;
+
+        if (!refreshedUser || !newAccessToken) {
+          throw new Error(
+            "Refresh response is missing the user or access token."
+          );
+        }
 
         persistUser(refreshedUser);
-        setAccessToken(newAccessToken);
-      } catch {
+        persistAccessToken(newAccessToken);
 
-        //the backend rejected the refresh token.
-        //The session has therefore expired or become invalid.
+        console.log("Session restored successfully.");
+      } catch (error) {
+        console.error("Failed to restore session:", error);
 
-        clearAuth();
+        if (!cancelled) {
+          clearAuth();
+        }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
-    restoreSession();
-  }, []);
+    void restoreSession();
 
-  /////////////////////////////
-  // LOGIN
-  /////////////////////////////
+    return () => {
+      cancelled = true;
+    };
+  }, [clearAuth, persistUser, persistAccessToken]);
+
+
+  ////////////////////
+  //LOGIN
+  ///////////////////
 
   const login = async (
     email: string,
@@ -113,15 +172,21 @@ export function AuthProvider({
     const response = await loginRequest(email, password);
 
     const loggedInUser = response.data.user;
-    const newAccessToken = response.data.user.access_token;
+    const newAccessToken = response.data.accessToken;
+
+    if (!loggedInUser || !newAccessToken) {
+      throw new Error(
+        "Login response is missing the user or access token."
+      );
+    }
 
     persistUser(loggedInUser);
-    setAccessToken(newAccessToken);
+    persistAccessToken(newAccessToken);
   };
 
-  /////////////////////////////
-  // LOGOUT
-  /////////////////////////////
+  //////////////////////
+  //LOGOUT
+  /////////////////////
 
   const logout = async (): Promise<void> => {
     try {
@@ -131,9 +196,9 @@ export function AuthProvider({
     }
   };
 
-  /////////////////////////////
-  // REGISTER
-  /////////////////////////////
+  ////////////////////////
+  //REGISTER
+  ///////////////////////
 
   const register = async (
     firstname: string,
@@ -149,14 +214,24 @@ export function AuthProvider({
     );
 
     const registeredUser = response.data.user;
-    const newAccessToken = response.data.user.access_token;
+    const newAccessToken = response.data.accessToken;
+
+    if (!registeredUser || !newAccessToken) {
+      throw new Error(
+        "Registration response is missing the user or access token."
+      );
+    }
 
     persistUser(registeredUser);
-    setAccessToken(newAccessToken);
+    persistAccessToken(newAccessToken);
   };
 
-  const isAuthenticated =
-    !!user && !!accessToken;
+
+  //////////////////////////////////////////////////////
+  //The user must have both a profile and access token
+  /////////////////////////////////////////////////////
+
+  const isAuthenticated = Boolean(user && accessToken);
 
   return (
     <AuthContext.Provider
@@ -175,6 +250,10 @@ export function AuthProvider({
   );
 }
 
+////////////////////////////////////////////////////////////////////
+//Acess authentication state from any component inside AythProvider
+///////////////////////////////////////////////////////////////////
+
 export function useAuth() {
   const context = useContext(AuthContext);
 
@@ -186,4 +265,3 @@ export function useAuth() {
 
   return context;
 }
-

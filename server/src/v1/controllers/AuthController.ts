@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserService from "../services/UserService";
-import { NewUser, ResetTokenPayload } from "../types";
+import { NewUser, ResetTokenPayload, User } from "../types";
 import { hash, verify } from 'argon2';
 import { sign, verify as JWTVerify } from 'jsonwebtoken';
 import { sendErrorResponse, sendSuccessResponse } from '../utils/responseHelper';
@@ -74,6 +74,7 @@ class AuthController {
       const hashPassword = await hash(password);
 
       const verificationToken = generateVerificationToken(normalizedEmail);
+      
 
       const newUser: NewUser = {
         firstname: firstName,
@@ -96,6 +97,7 @@ class AuthController {
         "Welcome to Olayinka Adebisi - Personal Website",
         html
       );
+      const accessToken = generateNewAccessToken(user);
 
       return sendSuccessResponse(
         res,
@@ -103,6 +105,7 @@ class AuthController {
         "New user created",
         {
           user: this.sanitizeUser(user),
+          accessToken
         }
       );
 
@@ -263,9 +266,9 @@ class AuthController {
         "User login successfully",
         {
           user: {
-            ...this.sanitizeUser(foundUser),
-            access_token,
+            ...this.sanitizeUser(foundUser)
           },
+          accessToken: access_token,
         }
       );
 

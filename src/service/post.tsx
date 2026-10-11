@@ -38,9 +38,10 @@ function buildQueryParams(
 }
 
 
-/*
- * PUBLIC
- */
+///////////////////////////////////
+// PUBLIC
+///////////////////////////////////
+
 
 export async function getPublishedPosts(
   params: GetPostsParams = {}
@@ -64,9 +65,9 @@ export async function getPublishedPostBySlug(
 }
 
 
-/*
- * PROTECTED
- */
+/////////////////////////////////
+// AUTHENTICATED
+/////////////////////////////////
 
 export async function createPost(
   post: Record<string, unknown>,

@@ -1,4 +1,4 @@
-import { sign } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import "dotenv/config";
 import { User } from "../types";
 
@@ -52,7 +52,9 @@ export const generatePasswordResetToken = (normalizedEmail: string) => {
         },
         process.env.PASSWORD_RESET_SECRET!,
         {
-            expiresIn: "1h",
+            expiresIn: "15m",
         }
     );
 }
+
+

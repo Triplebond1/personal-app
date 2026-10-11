@@ -25,7 +25,6 @@ class LogoutController {
       return sendSuccessResponse(res, 200, "User already logged out", {});
 
     const oldToken = cookies.refresh_token;
-    console.log("Old Token:", oldToken);
     try {
       const foundUser = await prisma.user.findFirstOrThrow({
         where: {
@@ -38,7 +37,6 @@ class LogoutController {
         },
       });
 
-       console.log("Found User:", foundUser);
 
       const token = foundUser.refresh_token.filter(
         (refresh: any) => refresh !== oldToken
@@ -57,7 +55,6 @@ class LogoutController {
 
       return sendSuccessResponse(res, 200, "Logout successful", {});
     } catch (error) {
-      console.log(error);
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === "P2025")
           return sendSuccessResponse(res, 200, "User already logged out", {});

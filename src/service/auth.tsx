@@ -8,7 +8,6 @@ export type User = {
   email: string;
   role: string;
   is_verified: boolean;
-  access_token: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -18,6 +17,7 @@ type AuthResponse = {
   message: string;
   data: {
     user: User;
+    accessToken: string;
   };
 };
 
@@ -68,12 +68,27 @@ export async function register(
 // REFRESH SESSION
 ///////////////////////////////
 
-export async function refreshSession(): Promise<AuthResponse> {
-  return api<AuthResponse>("/refresh", {
-    method: "GET",
-  });
-}
+// export async function refreshSession(
+// ): Promise<AuthResponse> {
+//   return api<AuthResponse>("/refresh", {
+//     method: "GET",
+//   });
+// }
 
+let refreshPromise: Promise<AuthResponse> | null = null;
+
+export function refreshSession( 
+): Promise<AuthResponse> {
+  if (!refreshPromise) {
+    refreshPromise = api<AuthResponse>("/refresh", {
+      method: "GET",
+    }).finally(() => {
+      refreshPromise = null;
+    });
+  }
+
+  return refreshPromise;
+}
 
 
 

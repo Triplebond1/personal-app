@@ -35,8 +35,7 @@ class RefreshController{
         }
       });
 
-
-
+      
       const decoded = JWTVerify(oldToken, process.env.REFRESH_TOKEN_SECRET as string) as RefreshTokenPayload;
 
       if (foundUser.id !== decoded.sub) return sendErrorResponse(res,403,"Forbidden");
@@ -53,7 +52,9 @@ class RefreshController{
       await this.device.updateDeviceToken(foundUser.id,req.headers['user-agent'] || "Unknown" as string, req.ip || "Unknown" as string,oldToken,new_refresh_token)
 
       const {password,refresh_token,verification_code,reset_password_token,...foundUserSafe} = foundUser
-      const user = { ...foundUserSafe, access_token };
+      const user = { ...foundUserSafe };
+      const accessToken = access_token;
+      
 
       // res.cookie("refresh_token", new_refresh_token, {
       //   httpOnly: true,
@@ -82,7 +83,7 @@ class RefreshController{
         }
       );
 
-      return sendSuccessResponse(res,200,"Authenticated",{user})
+      return sendSuccessResponse(res,200,"Authenticated",{user, accessToken},);
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
         if (e.code === "P2025") return sendErrorResponse(res,403,"Forbidden");
