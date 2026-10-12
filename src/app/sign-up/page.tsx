@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "../../components/auth/authProvider";
 import { useRouter } from "next/navigation";
+import { DASHBOARD_URL } from "@/src/lib/paths";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -45,7 +46,7 @@ export default function RegisterPage() {
         password
       );
 
-      router.push("/dashboard");
+      router.push(DASHBOARD_URL);
     } catch (error) {
       setError(
         error instanceof Error

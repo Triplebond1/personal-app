@@ -1,3 +1,4 @@
+import { NEW_POST_URL } from "@/src/lib/paths";
 import Link from "next/link";
 
 const posts = [
@@ -37,7 +38,7 @@ export default function PostsPage() {
           </div>
 
           <Link
-           href="/dashboard/post/newPost"
+           href={NEW_POST_URL}
             className="rounded-lg bg-zinc-950 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
           >
             New post

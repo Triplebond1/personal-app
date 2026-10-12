@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuth } from "../../components/auth/authProvider";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import {  DASHBOARD_URL, NEW_POST_URL, POST_URL } from "@/src/lib/paths";
 
 
 export default function DashboardSidebar() {
@@ -113,10 +114,10 @@ export default function DashboardSidebar() {
         {/* Navigation */}
         <nav className="flex-1 space-y-1 px-4 py-6">
           <Link
-            href="/dashboard"
+            href={DASHBOARD_URL}
             onClick={closeSidebar}
             className={`block rounded-lg px-3 py-2 text-sm transition ${
-              isActive("/dashboard")
+              isActive(DASHBOARD_URL)
                 ? "bg-zinc-100 font-medium text-zinc-950"
                 : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
             }`}
@@ -125,10 +126,10 @@ export default function DashboardSidebar() {
           </Link>
 
           <Link
-            href="/dashboard/posts"
+            href={POST_URL}
             onClick={closeSidebar}
             className={`block rounded-lg px-3 py-2 text-sm transition ${
-              isActive("/dashboard/posts")
+              isActive(POST_URL)
                 ? "bg-zinc-100 font-medium text-zinc-950"
                 : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
             }`}
@@ -137,10 +138,10 @@ export default function DashboardSidebar() {
           </Link>
 
           <Link
-            href="/dashboard/post/newPost"
+            href={NEW_POST_URL}
             onClick={closeSidebar}
             className={`block rounded-lg px-3 py-2 text-sm transition ${
-              isActive("/dashboard/post/newPost")
+              isActive(NEW_POST_URL)
                 ? "bg-zinc-100 font-medium text-zinc-950"
                 : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
             }`}

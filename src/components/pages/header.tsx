@@ -1,5 +1,6 @@
 "use client";
 
+import { ABOUT_ME_URL, DASHBOARD_URL, NOW_URL, PROJECT_URL, RESEARCH_URL, WORK_WITH_ME_URL, WRITING_URL } from "@/src/lib/paths";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -12,7 +13,7 @@ export const Header = () => {
   // and dashboard pages.
   const isPrivateRoute =
     pathname === "/login" ||
-    pathname.startsWith("/dashboard");
+    pathname.startsWith(DASHBOARD_URL);
 
   if (isPrivateRoute) {
     return null;
@@ -41,14 +42,14 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-8 text-sm text-zinc-600 md:flex">
             <Link
-              href="/writings"
+              href={WRITING_URL}
               className="transition hover:text-zinc-950"
             >
               Writing
             </Link>
 
             <Link
-              href="/projects"
+              href={PROJECT_URL}
               className="transition hover:text-zinc-950"
             >
               Projects
@@ -62,14 +63,14 @@ export const Header = () => {
             </Link>
 
             <Link
-              href="/about-me"
+              href={ABOUT_ME_URL}
               className="transition hover:text-zinc-950"
             >
               About
             </Link>
 
             <Link
-              href="/now"
+              href={NOW_URL}
               className="transition hover:text-zinc-950"
             >
               Now
@@ -78,7 +79,7 @@ export const Header = () => {
 
           {/* Desktop CTA */}
           <Link
-            href="/work-with-me"
+            href={WORK_WITH_ME_URL}
             className="hidden rounded-full bg-zinc-950 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 md:block"
           >
             Work with me
@@ -132,7 +133,7 @@ export const Header = () => {
             <div className="flex flex-col">
 
               <Link
-                href="/writings"
+                href={WRITING_URL}
                 onClick={closeMenu}
                 className="border-b border-zinc-100 py-4 text-sm text-zinc-700 transition hover:text-zinc-950"
               >
@@ -140,7 +141,7 @@ export const Header = () => {
               </Link>
 
               <Link
-                href="/projects"
+                href={PROJECT_URL}
                 onClick={closeMenu}
                 className="border-b border-zinc-100 py-4 text-sm text-zinc-700 transition hover:text-zinc-950"
               >
@@ -148,7 +149,7 @@ export const Header = () => {
               </Link>
 
               <Link
-                href="/research"
+                href={RESEARCH_URL}
                 onClick={closeMenu}
                 className="border-b border-zinc-100 py-4 text-sm text-zinc-700 transition hover:text-zinc-950"
               >
@@ -156,7 +157,7 @@ export const Header = () => {
               </Link>
 
               <Link
-                href="/about-me"
+                href={ABOUT_ME_URL}
                 onClick={closeMenu}
                 className="border-b border-zinc-100 py-4 text-sm text-zinc-700 transition hover:text-zinc-950"
               >
@@ -164,7 +165,7 @@ export const Header = () => {
               </Link>
 
               <Link
-                href="/now"
+                href={NOW_URL}
                 onClick={closeMenu}
                 className="border-b border-zinc-100 py-4 text-sm text-zinc-700 transition hover:text-zinc-950"
               >
@@ -172,7 +173,7 @@ export const Header = () => {
               </Link>
 
               <Link
-                href="/work-with-me"
+                href={WORK_WITH_ME_URL}
                 onClick={closeMenu}
                 className="mt-5 rounded-full bg-zinc-950 px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-zinc-800"
               >

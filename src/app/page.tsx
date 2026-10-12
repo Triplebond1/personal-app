@@ -5,6 +5,7 @@ import { PostCard } from "../components/postCard";
 import { ProjectCard } from "../components/projectCard";
 import { getPublishedPosts } from "../service/post";
 import { Post } from "../types/post";
+import { NOW_URL, PROJECT_URL, RESEARCH_URL, WORK_WITH_ME_URL, WRITING_URL } from "../lib/paths";
 
 const projects = [
   {
@@ -76,14 +77,14 @@ export default async function Home() {
 
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              href="/writings"
+              href={WRITING_URL}
               className="rounded-full bg-zinc-950 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
             >
               Read my writing →
             </Link>
 
             <Link
-              href="/work-with-me"
+              href={WORK_WITH_ME_URL}
               className="rounded-full border border-zinc-300 px-6 py-3 text-sm font-medium transition hover:border-zinc-950"
             >
               Work with me
@@ -109,7 +110,7 @@ export default async function Home() {
               </p>
 
               <Link
-                href="/now"
+                href={NOW_URL}
                 className="mt-6 inline-block text-sm font-medium underline underline-offset-4"
               >
                 What I&apos;m working on now →
@@ -136,7 +137,7 @@ export default async function Home() {
           </div>
 
           <Link
-            href="/writings"
+            href={WRITING_URL}
             className="hidden whitespace-nowrap text-sm font-medium underline underline-offset-4 md:block"
           >
             Read all writing →
@@ -162,7 +163,7 @@ export default async function Home() {
         </div>
 
         <Link
-          href="/writings"
+          href={WRITING_URL}
           className="mt-8 inline-block text-sm font-medium underline underline-offset-4 md:hidden"
         >
           Read all writing →
@@ -201,7 +202,7 @@ export default async function Home() {
           </div>
 
           <Link
-            href="/projects"
+            href={PROJECT_URL}
             className="mt-8 inline-block text-sm font-medium text-zinc-300 underline underline-offset-4"
           >
             Explore all projects →
@@ -229,7 +230,7 @@ export default async function Home() {
 
             {research.map((question, index) => (
               <Link
-                href="/research"
+                href={RESEARCH_URL}
                 key={question}
                 className="group flex gap-6 py-7"
               >
@@ -272,7 +273,7 @@ export default async function Home() {
             </div>
 
             <Link
-              href="/now"
+              href={NOW_URL}
               className="text-sm font-medium underline underline-offset-4"
             >
               Visit my Now page →
@@ -321,7 +322,7 @@ export default async function Home() {
           </div>
 
           <Link
-            href="/work-with-me"
+            href={WORK_WITH_ME_URL}
             className="mt-10 inline-block rounded-full bg-zinc-950 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-zinc-800"
           >
             Let&apos;s talk →

@@ -1,0 +1,10 @@
+export const NEW_POST_URL = "/dashboard/posts/newPost";
+export const DASHBOARD_URL = "/dashboard";
+export const POST_URL = "/dashboard/posts"
+export const WRITING_URL = "/writings"
+export const ABOUT_ME_URL = "/about-me"
+export const PROJECT_URL = "/projects" 
+export const RESEARCH_URL = "/research" 
+export const CONTACT_ME_URL = "/contact"
+export const WORK_WITH_ME_URL = "/work-with-me"
+export const NOW_URL = "/now"

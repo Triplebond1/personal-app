@@ -1,3 +1,4 @@
+import { WORK_WITH_ME_URL, WRITING_URL } from "@/src/lib/paths";
 import Link from "next/link";
 
 export default function AboutPage() {
@@ -308,14 +309,14 @@ export default function AboutPage() {
 
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
-                href="/work-with-me"
+                href={WORK_WITH_ME_URL}
                 className="rounded-full bg-white px-6 py-3 text-sm font-medium text-zinc-950 transition hover:bg-zinc-200"
               >
                 Work with me →
               </Link>
 
               <Link
-                href="/writings"
+                href={WRITING_URL}
                 className="rounded-full border border-zinc-700 px-6 py-3 text-sm font-medium text-white transition hover:border-zinc-400"
               >
                 Read my writing

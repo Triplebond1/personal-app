@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "../../components/auth/authProvider";
 import { useRouter } from "next/navigation";
+import { DASHBOARD_URL, SIGN_UP_URL } from "@/src/lib/paths";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -28,7 +29,7 @@ async function handleSubmit(
   try {
     await login(email, password);
 
-    router.push("/dashboard");
+    router.push(DASHBOARD_URL);
   } catch (error) {
     setError(
       error instanceof Error
@@ -198,7 +199,7 @@ async function handleSubmit(
           <p className="text-sm text-zinc-500">
             Don't have an account?{" "}
             <Link
-              href="/signup"
+              href={SIGN_UP_URL}
               className="font-medium text-zinc-950 hover:underline"
             >
               Sign up

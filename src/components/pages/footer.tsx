@@ -1,3 +1,4 @@
+import { ABOUT_ME_URL, CONTACT_ME_URL, PROJECT_URL, RESEARCH_URL, WRITING_URL } from "@/src/lib/paths";
 import Link from "next/link";
 
 
@@ -15,19 +16,19 @@ export const Footer = () => {
           </div>
 
           <div className="flex flex-wrap gap-6 text-sm text-zinc-500">
-            <Link href="/writings" className="hover:text-zinc-950">
+            <Link href={WRITING_URL} className="hover:text-zinc-950">
               Writing
             </Link>
-            <Link href="/projects" className="hover:text-zinc-950">
+            <Link href={PROJECT_URL} className="hover:text-zinc-950">
               Projects
             </Link>
-            <Link href="/research" className="hover:text-zinc-950">
+            <Link href={RESEARCH_URL}className="hover:text-zinc-950">
               Research
             </Link>
-            <Link href="/about" className="hover:text-zinc-950">
+            <Link href={ABOUT_ME_URL} className="hover:text-zinc-950">
               About
             </Link>
-            <Link href="/contact" className="hover:text-zinc-950">
+            <Link href={CONTACT_ME_URL} className="hover:text-zinc-950">
               Contact
             </Link>
           </div>

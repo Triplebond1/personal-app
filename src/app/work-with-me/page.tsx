@@ -1,4 +1,5 @@
 
+import { ABOUT_ME_URL } from "@/src/lib/paths";
 import Link from "next/link";
 
 const areas = [
@@ -132,7 +133,7 @@ export default function WorkWithMePage() {
           </a>
 
           <Link
-            href="/about"
+            href={ABOUT_ME_URL}
             className="rounded-full border border-neutral-300 px-6 py-3 text-sm font-medium transition hover:border-neutral-500"
           >
             More about me

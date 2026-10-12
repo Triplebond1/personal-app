@@ -1,4 +1,5 @@
 
+import { RESEARCH_URL, WORK_WITH_ME_URL, WRITING_URL } from "@/src/lib/paths";
 import Link from "next/link";
 
 export default function ContactPage() {
@@ -117,21 +118,21 @@ export default function ContactPage() {
       {/* Navigation */}
       <section className="mt-20 flex flex-wrap gap-6 border-t border-slate-200 pt-8 text-sm font-medium">
         <Link
-          href="/work-with-me"
+          href={WORK_WITH_ME_URL}
           className="text-slate-900 hover:underline"
         >
           Work with me →
         </Link>
 
         <Link
-          href="/writings"
+          href={WRITING_URL}
           className="text-slate-600 hover:text-slate-900 hover:underline"
         >
           Read my writing →
         </Link>
 
         <Link
-          href="/research"
+          href={RESEARCH_URL}
           className="text-slate-600 hover:text-slate-900 hover:underline"
         >
           Explore my research →

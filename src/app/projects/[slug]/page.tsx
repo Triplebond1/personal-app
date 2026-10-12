@@ -1,3 +1,4 @@
+import { PROJECT_URL, RESEARCH_URL } from "@/src/lib/paths";
 import {
   getPublishedPostBySlug,
   getPublishedPosts,
@@ -73,7 +74,7 @@ export default async function ProjectsPage({ params }: PostPageProps) {
 
                 {/* Back navigation */}
        <Link
-        href="/projects"
+        href={PROJECT_URL}
         className="text-sm text-zinc-500 transition-colors hover:text-zinc-950"
       >
         ← Back to projects
@@ -173,7 +174,7 @@ export default async function ProjectsPage({ params }: PostPageProps) {
         </p>
 
         <Link
-          href="/researchs"
+          href={RESEARCH_URL}
           className="mt-6 inline-block text-sm font-medium text-zinc-950 underline underline-offset-4"
         >
           Explore more research →

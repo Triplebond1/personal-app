@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { IProject } from "../types/project";
+import { PROJECT_URL } from "../lib/paths";
 
 
 export const ProjectCard = ({ project }: { project: IProject  }) => {
   return (
     <Link
-      href="/projects"
+      href={PROJECT_URL}
       className="group bg-zinc-950 p-8 transition hover:bg-zinc-900"
     >
       <div className="flex items-start justify-between">

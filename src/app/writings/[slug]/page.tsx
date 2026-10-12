@@ -10,6 +10,7 @@ import post, {
   getPublishedPostBySlug,
   getPublishedPosts,
 } from "../../../service/post";
+import { WRITING_URL } from "@/src/lib/paths";
 
 
 
@@ -86,7 +87,7 @@ export default async function PostPage({
         <header className="mx-auto max-w-4xl px-6 pb-16 pt-24 md:pb-20 md:pt-32">
 
           <Link
-            href="/writings"
+            href={WRITING_URL}
             className="text-sm text-zinc-500 transition-colors hover:text-zinc-950"
           >
             ← Back to writing
@@ -181,7 +182,7 @@ export default async function PostPage({
         <div className="mx-auto max-w-3xl px-6 py-16">
 
           <Link
-            href="/writings"
+            href={WRITING_URL}
             className="text-sm font-medium underline underline-offset-4"
           >
             ← Read more writing
