@@ -4,32 +4,6 @@ import { getPublishedPosts } from "@/src/service/post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
- export const projects = [
-  {
-    title: "Secure Notes",
-    slug: "secure-notes",
-    description:
-      "A secure notes application built to explore backend engineering, authentication, authorization, and practical application security.",
-    status: "In progress",
-    tags: ["Go", "Security", "Backend"],
-  },
-  {
-    title: "Anti-Counterfeit Infrastructure",
-    slug: "anti-counterfeit-infrastructure",
-    description:
-      "Researching cryptographic and blockchain-based approaches for verifying physical products across fragmented supply chains.",
-    status: "Research",
-    tags: ["Blockchain", "Cryptography", "Supply Chain"],
-  },
-  {
-    title: "Inventory Infrastructure",
-    slug: "inventory-infrastructure",
-    description:
-      "An inventory and ordering system designed around the operational realities of fragmented spare-parts markets.",
-    status: "Concept",
-    tags: ["Software", "Commerce", "Infrastructure"],
-  },
- ];
 
  type ProjectPost = {
   title: string;

@@ -5,6 +5,7 @@ import { getPosts } from "@/src/service/post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPublishedPosts } from "../../service/post";
+import { formatDate } from "@/src/lib/helpers";
 
 // const posts = [
 //   {
@@ -116,11 +117,7 @@ export default function WritingPage() {
             post.categories?.[0]?.name ??
             post.type ??
             "Writing",
-          date: new Date(post.createdAt).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          }),
+          date: formatDate(post.createdAt),
           readTime: post.readTime
             ? `${post.readTime} min read`
             : "",

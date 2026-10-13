@@ -11,6 +11,7 @@ import post, {
   getPublishedPosts,
 } from "../../../service/post";
 import { WRITING_URL } from "@/src/lib/paths";
+import { formatDate } from "@/src/lib/helpers";
 
 
 
@@ -68,14 +69,7 @@ export default async function PostPage({
   }
 
 
-  const date = new Date(post.createdAt).toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }
-  );
+  const date = formatDate(post.createdAt)
 
   return (
     <div className="min-h-screen bg-white text-zinc-950">

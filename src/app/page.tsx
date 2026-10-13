@@ -1,11 +1,12 @@
 
 import Link from "next/link";
 
-import { PostCard } from "../components/postCard";
+import { PostCard } from "../components/post";
 import { ProjectCard } from "../components/projectCard";
 import { getPublishedPosts } from "../service/post";
 import { Post } from "../types/post";
 import { NOW_URL, PROJECT_URL, RESEARCH_URL, WORK_WITH_ME_URL, WRITING_URL } from "../lib/paths";
+import { formatDate } from "../lib/helpers";
 
 const projects = [
   {
@@ -41,11 +42,8 @@ export default async function Home() {
     post.excerpt ??
     "A technical exploration of blockchain, security and digital infrastructure.",
   category: post.categories && post.categories.length > 0 ? post.categories.map((category) => category.name).join(" · "): "WRITING",
-    createdAt: new Date(post.createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }),
+    createdAt: formatDate(post.createdAt),
+  
   readTime: post.readTime
     ? `${post.readTime} min read`
     : "",

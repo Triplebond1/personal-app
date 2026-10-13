@@ -1,3 +1,4 @@
+import { formatDate } from "@/src/lib/helpers";
 import { RESEARCH_URL } from "@/src/lib/paths";
 import {
   getPublishedPostBySlug,
@@ -67,14 +68,7 @@ export default async function ResearchPage({ params }: PostPageProps) {
     notFound();
   } 
 
-    const date = new Date(post.createdAt).toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }
-    );
+    const date = formatDate(post.createdAt)
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
