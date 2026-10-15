@@ -68,12 +68,7 @@ export async function register(
 // REFRESH SESSION
 ///////////////////////////////
 
-// export async function refreshSession(
-// ): Promise<AuthResponse> {
-//   return api<AuthResponse>("/refresh", {
-//     method: "GET",
-//   });
-// }
+//To ensure only one is resolved to when two or more refresh are sent once
 
 let refreshPromise: Promise<AuthResponse> | null = null;
 

@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { NEW_POST_URL } from "@/src/lib/paths";
-import { PostView } from "@/src/components/post";
+import { PostView } from "@/src/components/post/post";
 
 
 
@@ -43,9 +43,11 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <PostView>
+              {/*POST VIEW */}
+
+      <PostView filterNum={5} ></PostView>
         
-      </PostView>
+      
     
             {/* Workspace footer */}
         <footer className="flex flex-col gap-2 border-t border-zinc-200 pt-5 text-xs text-zinc-400 sm:flex-row sm:items-center sm:justify-between mx-auto max-w-7xl space-y-9 px-5 py-7 sm:px-8 sm:py-9 ">

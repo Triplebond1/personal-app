@@ -82,13 +82,16 @@ export async function createPost(
 
 export async function getPosts(
   accessToken: string,
-  params: GetPostsParams = {}
+  params: GetPostsParams = {},
+  signal:AbortSignal
 ): Promise<PostsResponse> {
   const query = buildQueryParams(params);
 
   return api<PostsResponse>(`/post/all${query}`, {
     method: "GET",
     token: accessToken,
+    signal,
+    cache: "no-store",
   });
 }
 

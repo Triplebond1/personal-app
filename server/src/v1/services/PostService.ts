@@ -207,6 +207,69 @@ public getPosts = async (data: GetPostsInput) => {
 };
 
 
+
+// export async function getPosts({
+//   page = 1,
+//   limit = 10,
+//   status,
+//   type,
+//   tag,
+//   category,
+// }: GetPostsInput) {
+//   const safePage = Math.max(1, Number(page) || 1);
+//   const safeLimit = Math.min(
+//     100,
+//     Math.max(1, Number(limit) || 10)
+//   );
+
+//   const skip = (safePage - 1) * safeLimit;
+
+//   const where = {
+//     ...(status && { status }),
+//     ...(type && { type }),
+//     ...(tag && {
+//       tags: {
+//         some: {
+//           slug: tag,
+//         },
+//       },
+//     }),
+//     ...(category && {
+//       categories: {
+//         some: {
+//           slug: category,
+//         },
+//       },
+//     }),
+//   };
+
+//   const [posts, total] = await Promise.all([
+//     prisma.post.findMany({
+//       where,
+//       skip,
+//       take: safeLimit,
+//       include: {
+//         author: true,
+//         tags: true,
+//         categories: true,
+//       },
+//       orderBy: {
+//         createdAt: "desc",
+//       },
+//     }),
+
+//     prisma.post.count({ where }),
+//   ]);
+
+//   return {
+//     posts,
+//     total,
+//     page: safePage,
+//     limit: safeLimit,
+//     totalPages: Math.ceil(total / safeLimit),
+//   };
+// }
+
   public getPublishedPosts = async (data: GetPostsInput) => {
       const page = data.page ?? 1;
       const limit = Math.min(data.limit ?? 20, 100);

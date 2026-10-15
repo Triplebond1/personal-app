@@ -1,45 +1,14 @@
 "use client";
+import { PostCard } from "@/src/components/post/post";
 import { getPublishedPosts } from "@/src/service/post";
+import { Post } from "@/src/types/post";
 import Link from "next/link";
 import { useState, useEffect} from "react";
 
-const research = [
-  {
-    title: "Smart Contract Security",
-    slug: "smart-contract-security",
-    description:
-      "Studying vulnerabilities in EVM-based smart contracts, how they are exploited, and how secure systems can be designed against them.",
-    status: "Active",
-    topics: ["EVM", "Solidity", "DeFi", "Security"],
-  },
-  {
-    title: "Trust Infrastructure for Physical Commerce",
-    slug: "trust-infrastructure-physical-commerce",
-    description:
-      "Exploring how cryptography, blockchain, and software infrastructure can improve trust and verification across fragmented physical markets.",
-    status: "Active",
-    topics: ["Blockchain", "Cryptography", "Supply Chain"],
-  },
-  {
-    title: "Security of Financial Protocols",
-    slug: "financial-protocol-security",
-    description:
-      "Research into the security assumptions, attack surfaces, and failure modes of systems that handle financial value.",
-    status: "Exploring",
-    topics: ["DeFi", "Security", "Protocol Design"],
-  },
-];
-type ResearchPost = {
-  title: string;
-  slug: string;
-  description: string;
-  status: string;
-  categories: string[];
-};
 
 export default function ResearchPage() {
 
-  const [posts, setPosts] = useState<ResearchPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,25 +20,29 @@ export default function ResearchPage() {
 
         const response = await getPublishedPosts({ type: "RESEARCH" });
 
-        if (!response.success) {
-          throw new Error("Failed to fetch research posts");
-        }
-      const formattedPosts: ResearchPost[] = response.data.posts.map((post) => ({
-        title: post.title,
-        slug: post.slug,
-        description: post.excerpt ?? "",
-        status: post.status,
-        categories: post.categories?.map((category) => category.name) ?? [],
-      }));
+        const formattedPosts: Post[] = response.data.posts.map((post) => ({
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            content: post.content,
+            excerpt: post.excerpt,
+            status: post.status,
+            type:post.type,
+            authorId:post.authorId,
+            readTime: post.readTime ||  null,
+            coverImage: post.coverImage ||   null,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt || null,
+        }));
 
-      setPosts(formattedPosts);
-      } catch (err) {
-      console.error("Failed to fetch published posts:", error);
-      setError((err as Error).message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        setPosts(formattedPosts);
+      } catch (error) {
+        console.error("Failed to fetch published posts:", error);
+        setError("Unable to load writings.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     fetchPosts();
   }, []);
@@ -93,7 +66,10 @@ export default function ResearchPage() {
         </p>
       </div>
 
-      <section className="mt-16 space-y-6">
+    {/* RESEARCHS */}
+      <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
+        <div className="divide-y divide-zinc-200 border-y border-zinc-200">
+
           {isLoading && (
             <div className="py-16 text-center text-sm text-zinc-400">
               Loading writings...
@@ -110,45 +86,17 @@ export default function ResearchPage() {
             <div className="py-16 text-center text-sm text-zinc-400">
               No writings published yet.
             </div>
-        )}
+          )}
 
-          
-        {!isLoading && !error && posts.map((item) => (
-          <Link
-            key={item.slug}
-            href={`/researchs/${item.slug}`}
-            className="group block rounded-2xl border border-neutral-200 p-6 transition hover:border-neutral-400"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-sm text-neutral-500">
-                {item.status}
-              </span>
-
-              <span className="text-neutral-400 transition group-hover:translate-x-1">
-                →
-              </span>
-            </div>
-
-            <h2 className="mt-6 text-2xl font-medium tracking-tight">
-              {item.title}
-            </h2>
-
-            <p className="mt-3 max-w-2xl leading-7 text-neutral-600">
-              {item.description}
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {item.categories.map((category) => (
-                <span
-                  key={category}
-                  className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-600"
-                >
-                  {category}
-                </span>
-              ))}
-            </div>
-          </Link>
-        ))}
+          {!isLoading &&
+            !error &&
+            posts.map((post) => (
+              <article key={post.id}>
+                <PostCard post={post} type="RESEARCH"></PostCard>
+               
+              </article>
+            ))}
+        </div>
       </section>
     </div>
   );

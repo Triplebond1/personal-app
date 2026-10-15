@@ -8,14 +8,14 @@ export type Post = {
   slug: string;
   content: string;
   excerpt: string | null;
-  published: boolean;
   status: PostStatus;
   type: PostType;
+  publishedAt?: string | null ;
   authorId: string;
   readTime: number | null;
-  coverImage: string | null;
+  coverImage?: string | null;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string | null ;
 
   author?: {
     id: string;

@@ -12,6 +12,9 @@ import post, {
 } from "../../../service/post";
 import { WRITING_URL } from "@/src/lib/paths";
 import { formatDate } from "@/src/lib/helpers";
+import { ArticleHeader } from "@/src/components/post/articleHeader";
+import { ArticleBody } from "@/src/components/post/articleBody";
+import { ArticleFooter } from "@/src/components/post/articleFooter";
 
 
 
@@ -72,119 +75,23 @@ export default async function PostPage({
   const date = formatDate(post.createdAt)
 
   return (
-    <div className="min-h-screen bg-white text-zinc-950">
+    <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
 
-      {/* ARTICLE */}
+          {/* ARTICLE */}
       <article>
-
         {/* ARTICLE HEADER */}
-        <header className="mx-auto max-w-4xl px-6 pb-16 pt-24 md:pb-20 md:pt-32">
 
-          <Link
-            href={WRITING_URL}
-            className="text-sm text-zinc-500 transition-colors hover:text-zinc-950"
-          >
-            ← Back to writing
-          </Link>
+        <ArticleHeader post={post} type="WRITING" Url= {WRITING_URL}></ArticleHeader>
 
-          <p className="mt-12 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
-            {post.type === "WRITING" && "Writing"}
-          </p>
+        {/* ARTICLE BODY */}
 
-         <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-          {post.categories?.map((category) => (
-            <span key={category.name}>{category.name}</span>
-          ))}
-        </div>
-
-          <h1 className="mt-5 text-5xl font-semibold leading-[1.05] tracking-[-0.04em] md:text-7xl">
-            {post.title}
-          </h1>
-
-          {post.excerpt && (
-            <p className="mt-7 text-xl leading-8 text-zinc-600">
-              {post.excerpt}
-            </p>
-          )}
-
-          <div className="mt-8 flex gap-3 text-sm text-zinc-400">
-            <span>{date}</span>
-
-            {post.readTime && (
-              <>
-                <span>·</span>
-                <span>{post.readTime} min read</span>
-              </>
-            )}
-          </div>
-
-        </header>
-
-        {/* ARTICLE CONTENT */}
-        <div className="border-t border-zinc-200">
-          <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
-
-            <article
-              className="
-                prose
-                prose-zinc
-                max-w-none
-
-                prose-headings:tracking-tight
-                prose-headings:font-semibold
-
-                prose-h2:mt-12
-                prose-h2:text-3xl
-
-                prose-h3:mt-10
-                prose-h3:text-2xl
-
-                prose-p:text-lg
-                prose-p:leading-8
-                prose-p:text-zinc-700
-
-                prose-a:text-zinc-950
-                prose-a:underline
-                prose-a:underline-offset-4
-
-                prose-strong:text-zinc-950
-
-                prose-blockquote:border-zinc-300
-                prose-blockquote:text-zinc-600
-
-                prose-code:text-zinc-950
-
-                prose-pre:rounded-xl
-                prose-pre:bg-zinc-950
-                prose-pre:text-zinc-200
-              "
-            >
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-              >
-                {post.content}
-              </ReactMarkdown>
-            </article>
-
-          </div>
-        </div>
+        <ArticleBody post={post}></ArticleBody>
 
       </article>
 
-      {/* ARTICLE FOOTER */}
-      <section className="border-t border-zinc-200 bg-zinc-50">
-        <div className="mx-auto max-w-3xl px-6 py-16">
-
-          <Link
-            href={WRITING_URL}
-            className="text-sm font-medium underline underline-offset-4"
-          >
-            ← Read more writing
-          </Link>
-
-        </div>
-      </section>
-
+      {/* ARTICLE FOOTER*/}
+          
+      <ArticleFooter Url={WRITING_URL} type= "WRITING"></ArticleFooter>
     </div>
   );
 }

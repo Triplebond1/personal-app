@@ -12,3 +12,20 @@ export function formatDate(date: string) {
     year: "numeric",
   }).format(new Date(date));
 }
+
+
+export function createSlug(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+export function splitIds(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}

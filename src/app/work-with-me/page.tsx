@@ -2,6 +2,7 @@
 import { ABOUT_ME_URL } from "@/src/lib/paths";
 import Link from "next/link";
 
+
 const areas = [
   {
     title: "Security Engineering",
@@ -126,7 +127,7 @@ export default function WorkWithMePage() {
 
         <div className="mt-8 flex flex-wrap gap-4">
           <a
-            href="mailto:hello@example.com"
+            href={process.env.SEND_USER_MAIL}
             className="rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-neutral-700"
           >
             Send me an email

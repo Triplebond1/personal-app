@@ -1,4 +1,4 @@
-import { PostView } from "@/src/components/post";
+import { PostView } from "@/src/components/post/post";
 import { NEW_POST_URL } from "@/src/lib/paths";
 import Link from "next/link";
 
@@ -33,7 +33,11 @@ export default function PostsPage() {
           </Link>
         </div>
       </header>
-      <PostView></PostView>
+      
+
+        {/*POST VIEW */}
+
+      <PostView filterNum={10}></PostView>
 
     </div>
   );

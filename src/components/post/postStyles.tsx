@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Post, PostStatus, PostType } from "../types/post";
-import { formatDate } from "../lib/helpers";
+import { Post, PostStatus, PostType } from "../../types/post";
+import { formatDate } from "../../lib/helpers";
 
 export type FilterStatus = "ALL" | PostStatus;
 
@@ -133,3 +133,83 @@ export function PostSkeleton() {
   );
 }
 
+
+type PaginationProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+};
+
+export function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationProps) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <nav
+      aria-label="Pagination"
+      className="flex flex-col gap-4 border-t border-zinc-200 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+    >
+      {/* Page information */}
+      <p className="text-sm text-zinc-500">
+        Page{" "}
+        <span className="font-medium text-zinc-900">
+          {currentPage}
+        </span>{" "}
+        of{" "}
+        <span className="font-medium text-zinc-900">
+          {totalPages}
+        </span>
+      </p>
+
+      {/* Navigation controls */}
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          aria-label="Previous page"
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-zinc-200 px-3 text-sm font-medium text-zinc-600 transition hover:border-zinc-400 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Previous</span>
+        </button>
+
+        {Array.from(
+          { length: totalPages },
+          (_, index) => index + 1
+        ).map((page) => (
+          <button
+            key={page}
+            type="button"
+            onClick={() => onPageChange(page)}
+            aria-label={`Go to page ${page}`}
+            aria-current={
+              currentPage === page ? "page" : undefined
+            }
+            className={`hidden h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium transition sm:inline-flex ${
+              currentPage === page
+                ? "bg-zinc-950 text-white"
+                : "text-zinc-600 hover:bg-zinc-100"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          aria-label="Next page"
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-zinc-200 px-3 text-sm font-medium text-zinc-600 transition hover:border-zinc-400 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <span>Next</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </nav>
+  );
+}

@@ -15,7 +15,7 @@ import remarkGfm from "remark-gfm";
 import { useAuth } from "../../../../components/auth/authProvider";
 import { createPost } from "@/src/service/post";
 import { PostStatus, PostType } from "@/src/types/post";
-import { getErrorMessage } from "@/src/lib/helpers";
+import { createSlug, getErrorMessage, splitIds } from "@/src/lib/helpers";
 import { DASHBOARD_URL } from "@/src/lib/paths";
 
 
@@ -26,21 +26,7 @@ const inputClass =
 const labelClass =
   "mb-2 block text-sm font-medium text-zinc-700";
 
-function createSlug(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
 
-function splitIds(value: string) {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
 
 
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { IProject } from "../types/project";
-import { PROJECT_URL } from "../lib/paths";
+import { IProject } from "../../types/project";
+import { PROJECT_URL } from "../../lib/paths";
 
 
 export const ProjectCard = ({ project }: { project: IProject  }) => {

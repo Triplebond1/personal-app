@@ -1,8 +1,8 @@
 
 import Link from "next/link";
 
-import { PostCard } from "../components/post";
-import { ProjectCard } from "../components/projectCard";
+import { PostCard } from "../components/post/post";
+import { ProjectCard } from "../components/post/projectCard";
 import { getPublishedPosts } from "../service/post";
 import { Post } from "../types/post";
 import { NOW_URL, PROJECT_URL, RESEARCH_URL, WORK_WITH_ME_URL, WRITING_URL } from "../lib/paths";
@@ -150,6 +150,7 @@ export default async function Home() {
               <PostCard
                 key={post.slug}
                 post={post}
+                type= {"WRITING"}
               />
             ))
           ) : (

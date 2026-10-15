@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPublishedPosts } from "../../service/post";
 import { formatDate } from "@/src/lib/helpers";
+import { PostCard } from "@/src/components/post/post";
+import { Post } from "@/src/types/post";
 
 // const posts = [
 //   {
@@ -85,18 +87,10 @@ const categories = [
   "Ideas",
 ];
 
-type WritingPost = {
-  id: string;
-  slug: string;
-  title: string;
-  description: string | null;
-  category: string;
-  date: string;
-  readTime: string;
-};
+
 
 export default function WritingPage() {
-  const [posts, setPosts] = useState<WritingPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -108,19 +102,19 @@ export default function WritingPage() {
 
         const response = await getPublishedPosts({ type: "WRITING" });
 
-        const formattedPosts: WritingPost[] = response.data.posts.map((post) => ({
-          id: post.id,
-          slug: post.slug,
-          title: post.title,
-          description: post.excerpt,
-          category:
-            post.categories?.[0]?.name ??
-            post.type ??
-            "Writing",
-          date: formatDate(post.createdAt),
-          readTime: post.readTime
-            ? `${post.readTime} min read`
-            : "",
+        const formattedPosts: Post[] = response.data.posts.map((post) => ({
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            content: post.content,
+            excerpt: post.excerpt,
+            status: post.status,
+            type:post.type,
+            authorId:post.authorId,
+            readTime: post.readTime ||  null,
+            coverImage: post.coverImage ||   null,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt || null,
         }));
 
         setPosts(formattedPosts);
@@ -201,42 +195,8 @@ export default function WritingPage() {
             !error &&
             posts.map((post) => (
               <article key={post.id}>
-                <Link
-                  href={`/writings/${post.slug}`}
-                  className="group block py-10"
-                >
-                  <div className="grid gap-6 md:grid-cols-[180px_1fr_80px]">
-
-                    <div>
-                      <p className="text-xs font-semibold tracking-[0.15em] text-zinc-400">
-                        {post.category}
-                      </p>
-                    </div>
-
-                    <div>
-                      <h2 className="text-2xl font-medium tracking-tight transition-colors group-hover:text-zinc-500 md:text-3xl">
-                        {post.title}
-                      </h2>
-
-                      <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">
-                        {post.description}
-                      </p>
-
-                      <div className="mt-5 flex gap-3 text-sm text-zinc-400">
-                        <span>{post.date}</span>
-
-                        <span>·</span>
-
-                        <span>{post.readTime}</span>
-                      </div>
-                    </div>
-
-                    <div className="hidden text-right text-2xl text-zinc-300 transition-colors group-hover:text-zinc-950 md:block">
-                      ↗
-                    </div>
-
-                  </div>
-                </Link>
+                <PostCard post={post} type="WRITING"></PostCard>
+               
               </article>
             ))}
         </div>
