@@ -174,14 +174,24 @@ export function PostView({ filterNum }: PostViewProps) {
           );
         }
 
-        const fetchedPosts = response.data?.posts;
-        const fetchedTotal = response.data?.total;
+      const fetchedPosts = response.data?.posts;
+      const fetchedTotal = response.data?.total;
+
+        console.log(
+          "fetched post 1",
+          fetchedPosts
+        )
 
         if (!Array.isArray(fetchedPosts)) {
           throw new Error(
             "The API response does not contain a data.posts array."
           );
         }
+
+        console.log(
+                  "fetched post 2",
+          fetchedPosts
+        )
 
         if (typeof fetchedTotal !== "number") {
           throw new Error(

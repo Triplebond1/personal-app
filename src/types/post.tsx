@@ -44,6 +44,10 @@ export type PostResponse = {
   message: string;
   data: {
     post: Post;
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
   };
 };
 
@@ -52,6 +56,10 @@ export type PostsResponse = {
   message: string;
   data: {
     posts: Post[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
   };
 };
 

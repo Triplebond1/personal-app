@@ -1,8 +1,8 @@
 import { CreatePostInput, UpdatePostInput, GetPostsInput } from "../types/post";
-
 import { prisma } from "../lib/prisma";
-
+import { PostStatus } from "@prisma/client";
 import "dotenv/config";
+
 
 export const publicUserSelect = {
   id: true,
@@ -108,6 +108,9 @@ class PostService {
 
   };
 
+  ////////////////////////
+  //GET POST BY ID
+  ///////////////////////
 
   public getPostById = async (id: string) => {
 
@@ -136,6 +139,10 @@ class PostService {
   };
 
 
+  /////////////////////////////
+  //GET POST BY SLUG
+  ////////////////////////////
+
   public getPostBySlug = async (slug: string) => {
 
     return prisma.post.findUniqueOrThrow({
@@ -161,294 +168,330 @@ class PostService {
   };
 
 
-public getPosts = async (data: GetPostsInput) => {
-  const page = data.page ?? 1;
-  const limit = Math.min(data.limit ?? 20, 100);
+  //////////////////////////////////
+  //GET POSTS
+  ////////////////////////////////
 
-  const skip = (page - 1) * limit;
+  public getPosts = async (data: GetPostsInput) => {
+    const page = data.page;
+    const limit = data.limit;
 
-  return prisma.post.findMany({
-    where: {
+    const parsedPage = Number(page);
+    const parsedLimit = Number(limit);
+
+    const safePage =
+      Number.isSafeInteger(parsedPage) && parsedPage > 0
+        ? parsedPage
+        : 1;
+
+    const safeLimit =
+      Number.isSafeInteger(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 100)
+        : 10;
+
+    const skip = (safePage - 1) * safeLimit;
+
+    const where = {
       status: data.status,
       type: data.type,
 
       tags: data.tag
         ? {
-            some: {
-              slug: data.tag
-            }
+          some: {
+            slug: data.tag
           }
+        }
         : undefined,
 
       categories: data.category
         ? {
-            some: {
-              slug: data.category
-            }
+          some: {
+            slug: data.category
           }
+        }
         : undefined
-    },
+    };
 
-    include: {
-      author: {
-          select: publicUserSelect
-        },
-      tags: true,
-      categories: true
-    },
+    const [posts, total] = await Promise.all(
+      [
+        prisma.post.findMany({
+          where,
 
-    orderBy: {
-      createdAt: "desc"
-    },
-
-    skip,
-    take: limit
-  });
-};
-
-
-
-// export async function getPosts({
-//   page = 1,
-//   limit = 10,
-//   status,
-//   type,
-//   tag,
-//   category,
-// }: GetPostsInput) {
-//   const safePage = Math.max(1, Number(page) || 1);
-//   const safeLimit = Math.min(
-//     100,
-//     Math.max(1, Number(limit) || 10)
-//   );
-
-//   const skip = (safePage - 1) * safeLimit;
-
-//   const where = {
-//     ...(status && { status }),
-//     ...(type && { type }),
-//     ...(tag && {
-//       tags: {
-//         some: {
-//           slug: tag,
-//         },
-//       },
-//     }),
-//     ...(category && {
-//       categories: {
-//         some: {
-//           slug: category,
-//         },
-//       },
-//     }),
-//   };
-
-//   const [posts, total] = await Promise.all([
-//     prisma.post.findMany({
-//       where,
-//       skip,
-//       take: safeLimit,
-//       include: {
-//         author: true,
-//         tags: true,
-//         categories: true,
-//       },
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//     }),
-
-//     prisma.post.count({ where }),
-//   ]);
-
-//   return {
-//     posts,
-//     total,
-//     page: safePage,
-//     limit: safeLimit,
-//     totalPages: Math.ceil(total / safeLimit),
-//   };
-// }
-
-  public getPublishedPosts = async (data: GetPostsInput) => {
-      const page = data.page ?? 1;
-      const limit = Math.min(data.limit ?? 20, 100);
-
-      const skip = (page - 1) * limit;
-
-    return prisma.post.findMany({
-
-      where: {
-        status: "PUBLISHED",
-
-        type: data.type,
-
-      tags: data.tag
-        ? {
-            some: {
-              slug: data.tag
-            }
-          }
-        : undefined,
-
-      categories: data.category
-        ? {
-            some: {
-              slug: data.category
-            }
-          }
-        : undefined
+      include: {
+        author: {
+            select: publicUserSelect
+          },
+        tags: true,
+        categories: true
       },
 
       orderBy: {
-        publishedAt: "desc"
+        createdAt: "desc"
       },
+
+      skip,
+      take: safeLimit
+        }),
+
+    prisma.post.count({ where }),
+      ]
+    )
+    return {
+      posts,
+      total, 
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.ceil(total / safeLimit),
+    }
+  };
+
+
+
+  //////////////////////////////
+  //GET PUBLISHED POSTS
+  /////////////////////////////
+
+  public getPublishedPosts = async (data: GetPostsInput) => {
+    const page = data.page;
+    const limit = data.limit;
+
+    const parsedPage = Number(page);
+    const parsedLimit = Number(limit);
+
+    const safePage =
+      Number.isSafeInteger(parsedPage) && parsedPage > 0
+        ? parsedPage
+        : 1;
+
+    const safeLimit =
+      Number.isSafeInteger(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 100)
+        : 10;
+
+    const skip = (safePage - 1) * safeLimit;
+    
+    const where = {
+      status: PostStatus.PUBLISHED,
+      type: data.type,
+
+      tags: data.tag
+        ? {
+          some: {
+            slug: data.tag
+          }
+        }
+        : undefined,
+
+      categories: data.category
+        ? {
+          some: {
+            slug: data.category
+          }
+        }
+        : undefined
+    };
+
+    const [posts, total] = await Promise.all(
+      [
+        prisma.post.findMany({
+          where,
 
       include: {
-
-        author:{
-          select: publicUserSelect
-        },
-
+        author: {
+            select: publicUserSelect
+          },
         tags: true,
-
-        categories: true,
-
+        categories: true
       },
 
-    skip,
-    take: limit
+      orderBy: {
+        createdAt: "desc"
+      },
 
-    });
+      skip,
+      take: safeLimit
+        }),
+
+    prisma.post.count({ where }),
+      ]
+    )
+    return {
+      posts,
+      total, 
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.ceil(total / safeLimit),
+    }
 
   };
 
+
+  ///////////////////////////////////////
+  //GET DRAFT POSTS
+  ///////////////////////////////////////
 
   public getDraftPosts = async (data: GetPostsInput) => {
 
-    return prisma.post.findMany({
+     const page = data.page;
+    const limit = data.limit;
 
-      where: {
-        status: "DRAFT",
+    const parsedPage = Number(page);
+    const parsedLimit = Number(limit);
 
-        type: data.type,
+    const safePage =
+      Number.isSafeInteger(parsedPage) && parsedPage > 0
+        ? parsedPage
+        : 1;
+
+    const safeLimit =
+      Number.isSafeInteger(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 100)
+        : 10;
+
+    const skip = (safePage - 1) * safeLimit;
+    
+    const where = {
+      status: PostStatus.DRAFT,
+      type: data.type,
 
       tags: data.tag
         ? {
-            some: {
-              slug: data.tag
-            }
+          some: {
+            slug: data.tag
           }
+        }
         : undefined,
 
       categories: data.category
         ? {
-            some: {
-              slug: data.category
-            }
+          some: {
+            slug: data.category
           }
-        : undefined,
+        }
+        : undefined
+    };
+
+    const [posts, total] = await Promise.all(
+      [
+        prisma.post.findMany({
+          where,
+
+      include: {
+        author: {
+            select: publicUserSelect
+          },
+        tags: true,
+        categories: true
       },
 
       orderBy: {
-        updatedAt: "desc"
+        createdAt: "desc"
       },
 
-      include: {
+      skip,
+      take: safeLimit
+        }),
 
+    prisma.post.count({ where }),
+      ]
+    )
+    return {
+      posts,
+      total, 
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.ceil(total / safeLimit),
+    }
+
+
+  };
+
+
+  /////////////////////////////
+  //UPDATE POST
+  /////////////////////////////
+
+  public updatePost = async (
+    id: string,
+    data: UpdatePostInput
+  ) => {
+      
+    const updateData: any = {
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      content: data.content,
+      status: data.status,
+      type: data.type,
+      coverImage: data.coverImage,
+      publishedAt: data.publishedAt,
+    
+      tags: data.tagIds
+        ? {
+            set: data.tagIds.map((id) => ({
+              id
+            }))
+          }
+        : undefined,
+        
+      categories: data.categoryIds
+        ? {
+            set: data.categoryIds.map((id) => ({
+              id
+            }))
+          }
+        : undefined,
+    };
+  
+  
+    // Recalculate read time whenever content changes
+    if (data.content !== undefined) {
+    
+      updateData.readTime = this.calculateReadTime(data.content);
+    
+    }
+  
+  
+    if (data.status === "PUBLISHED") {
+          
+      updateData.publishedAt = new Date();
+        
+       }
+      
+      
+    return prisma.post.update({
+    
+      where: {
+        id
+      },
+    
+      data: updateData,
+    
+      include: {
+      
         author: {
           select: publicUserSelect
         },
-
-        tags: true,
-
-        categories: true,
-
-      }
-
-    });
-
-  };
-
-
-public updatePost = async (
-  id: string,
-  data: UpdatePostInput
-) => {
-    
-  const updateData: any = {
-    title: data.title,
-    slug: data.slug,
-    excerpt: data.excerpt,
-    content: data.content,
-    status: data.status,
-    type: data.type,
-    coverImage: data.coverImage,
-    publishedAt: data.publishedAt,
-
-    tags: data.tagIds
-      ? {
-          set: data.tagIds.map((id) => ({
-            id
-          }))
-        }
-      : undefined,
-
-    categories: data.categoryIds
-      ? {
-          set: data.categoryIds.map((id) => ({
-            id
-          }))
-        }
-      : undefined,
-  };
-
-
-  // Recalculate read time whenever content changes
-  if (data.content !== undefined) {
-
-    updateData.readTime = this.calculateReadTime(data.content);
-
-  }
-
-
-  if (data.status === "PUBLISHED") {
-        
-    updateData.publishedAt = new Date();
       
-     }
-
-
-  return prisma.post.update({
-
-    where: {
-      id
-    },
-
-    data: updateData,
-
-    include: {
-
-      author: {
-        select: publicUserSelect
-      },
-
-      tags: true,
-
-      categories: true,
-
-    }
-
-  });
-
-};
-
+        tags: true,
+      
+        categories: true,
+      
+      }
+    
+    });
+  
+  };
+  
+  //////////////////////////
+  //PUBLISH POST
+  //////////////////////////
 
   public publishPost = async (id: string) => {
-
+  
     const post = await prisma.post.findUniqueOrThrow({
-
-      where: {
+    
+    where: {
         id
       },
 
@@ -483,6 +526,10 @@ public updatePost = async (
   };
 
 
+  //////////////////////////////
+  //ARCHIVE POST
+  /////////////////////////////
+
   public archivePost = async (id: string) => {
 
     return prisma.post.update({
@@ -502,6 +549,10 @@ public updatePost = async (
   };
 
 
+  /////////////////////////////
+  //DELETE POST
+  ////////////////////////////
+  
   public deletePost = async (id: string) => {
 
     return prisma.post.delete({

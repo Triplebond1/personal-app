@@ -270,9 +270,9 @@ public getPosts = async (req: Request, res: Response) => {
       res,
       200,
       "Posts retrieved successfully",
-      {
+      
         posts
-      }
+      
     );
 
   } catch (error) {
@@ -306,9 +306,9 @@ public getPosts = async (req: Request, res: Response) => {
         res,
         200,
         "Published posts retrieved successfully",
-        {
+        
           posts
-        }
+        
       );
 
     } catch (error) {
@@ -348,9 +348,9 @@ public getPosts = async (req: Request, res: Response) => {
         res,
         200,
         "Draft posts retrieved successfully",
-        {
+        
           posts
-        }
+        
       );
 
     } catch (error) {
