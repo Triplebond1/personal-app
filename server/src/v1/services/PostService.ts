@@ -2,18 +2,10 @@ import { CreatePostInput, UpdatePostInput, GetPostsInput } from "../types/post";
 import { prisma } from "../lib/prisma";
 import { PostStatus } from "@prisma/client";
 import "dotenv/config";
+import { publicUserSelect } from "../types";
 
 
-export const publicUserSelect = {
-  id: true,
-  firstname: true,
-  lastname: true,
-  email: true,
-  role: true,
-  is_verified: true,
-  createdAt: true,
-  updatedAt: true
-};
+
 
 class PostService {
 
@@ -61,6 +53,10 @@ class PostService {
         status: data.status ?? "DRAFT",
 
         type: data.type,
+
+        progress: data.progress,
+
+        references: data.references,
 
         readTime: data.readTime,
 
@@ -194,6 +190,7 @@ class PostService {
     const where = {
       status: data.status,
       type: data.type,
+      progress: data.progress,
 
       tags: data.tag
         ? {
@@ -389,7 +386,7 @@ class PostService {
       },
 
       skip,
-      take: safeLimit
+      take: limit
         }),
 
     prisma.post.count({ where }),
@@ -420,7 +417,9 @@ class PostService {
       title: data.title,
       slug: data.slug,
       excerpt: data.excerpt,
+      references: data.references,
       content: data.content,
+      progress: data.progress,
       status: data.status,
       type: data.type,
       coverImage: data.coverImage,

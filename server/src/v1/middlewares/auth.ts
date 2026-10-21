@@ -40,6 +40,7 @@ class Auth {
   req.user = {
     id: payload.sub,
     email: payload.email,
+    role: payload.role,
   };
 
 

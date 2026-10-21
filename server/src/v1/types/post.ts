@@ -2,6 +2,8 @@ export type PostStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type PostType = "WRITING" | "RESEARCH" | "PROJECT" | "NOTE";
 
+export type PostProgress = "INPROGRESS" | "COMPLETED";
+
 export interface PostAuthor {
   id: string;
   firstname: string;
@@ -31,6 +33,9 @@ export interface Post {
 
   status: PostStatus;
   type: PostType;
+  progress: PostProgress;
+
+  references: string | null;
 
   coverImage: string | null;
   readTime: number | null;
@@ -51,8 +56,10 @@ export interface CreatePostInput {
   slug: string;
   excerpt?: string;
   content: string;
+  references?: string | null;
   readTime?: number | null;
   status?: PostStatus;
+  progress?: PostProgress | null;
   publishedAt?: Date | null;
   type: PostType;
 
@@ -65,6 +72,7 @@ export interface CreatePostInput {
 
 export interface GetPostsInput {
   status?: PostStatus;
+  progress?: PostProgress;
   type?: PostType;
   tag?: string;
   category?: string;
@@ -77,6 +85,8 @@ export interface UpdatePostInput {
   slug?: string;
   excerpt?: string;
   content?: string;
+  references?: string | null;
+  progress?: PostProgress | null;
   readTime?: number | null;
   status?: PostStatus;
   type?: PostType;

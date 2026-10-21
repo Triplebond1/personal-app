@@ -16,3 +16,5 @@ export const getDatTimeUTC = () => {
     const seconds = String(now.getUTCSeconds()).padStart(2, "0"); // Two-digit seconds
     return `${day} ${month} ${year} ${hours}:${minutes}:${seconds} (UTC)`;
 }
+
+

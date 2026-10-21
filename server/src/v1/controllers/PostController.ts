@@ -37,6 +37,8 @@ class PostController {
       content,
       status,
       type,
+      progress,
+      references,
       coverImage,
       tagIds,
       categoryIds
@@ -76,8 +78,10 @@ class PostController {
             ? String(excerpt).trim()
             : undefined,
           content: String(content),
+          references: references? String(references) : undefined,
           status,
           type,
+          progress,
           coverImage,
           tagIds,
           categoryIds
@@ -402,6 +406,8 @@ public getPosts = async (req: Request, res: Response) => {
       content,
       status,
       type,
+      progress,
+      references,
       coverImage,
       tagIds,
       categoryIds
@@ -419,6 +425,8 @@ public getPosts = async (req: Request, res: Response) => {
           content,
           status,
           type,
+          progress,
+          references,
           coverImage,
           tagIds,
           categoryIds

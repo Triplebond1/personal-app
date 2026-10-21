@@ -52,19 +52,26 @@ enum PostType {
   NOTE
 }
 
+enum PostProgress {
+  INPROGRESS
+  COMPLETED
+}
+
 model Post {
   id String @id @default(uuid())
 
-  title   String
-  slug    String     @unique
-  excerpt String?
-  content String
-  type    PostType   @default(WRITING)
-  status  PostStatus @default(DRAFT)
+  title    String
+  slug     String        @unique
+  excerpt  String?
+  content  String
+  type     PostType      @default(WRITING)
+  status   PostStatus    @default(DRAFT)
+  progress PostProgress?
 
   coverImage String?
 
-  readTime Int?
+  readTime   Int?
+  references String?
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
@@ -90,20 +97,23 @@ enum PostStatus {
 }
 
 model Comment {
-  id String @id @default(uuid())
-
+  id      String @id @default(uuid())
   content String
 
   postId   String
   authorId String
+  parentId String?
 
   post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([postId])
+  @@index([postId, parentId])
   @@index([authorId])
 }
 

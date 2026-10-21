@@ -1,6 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
 import { Request } from "express";
 
+type UserRole = "USER" | "ADMIN" | "MODERATOR"
 
 export interface NewUser {
   email: string;
@@ -13,7 +14,7 @@ export interface NewUser {
 
 export interface User extends NewUser {
   id: string;
-  role: "USER" | "ADMIN" | "MODERATOR";
+  role: UserRole;
   refresh_token: string[];
   reset_password_token: string | null;
   is_verified: boolean;
@@ -25,6 +26,7 @@ export interface User extends NewUser {
 export interface AccessTokenPayload extends JwtPayload {
   sub: string;
   email: string;
+  role: UserRole;
   type: "access";
 }
 
@@ -42,6 +44,7 @@ export interface ResetTokenPayload extends JwtPayload {
 export interface UserAuth {
   id: string;
   email: string;
+  role: UserRole
 }
 
 
@@ -49,3 +52,13 @@ export interface AuthenticatedRequest extends Request {
   user?: UserAuth;
 }
 
+export const publicUserSelect = {
+  id: true,
+  firstname: true,
+  lastname: true,
+  email: true,
+  role: true,
+  is_verified: true,
+  createdAt: true,
+  updatedAt: true
+};

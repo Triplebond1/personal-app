@@ -45,7 +45,7 @@ export default async function Home() {
     createdAt: formatDate(post.createdAt),
   
   readTime: post.readTime
-    ? `${post.readTime} min read`
+    ? `${post.readTime}`
     : "",
 }));
   } catch (error) {

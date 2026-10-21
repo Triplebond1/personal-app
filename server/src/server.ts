@@ -16,7 +16,7 @@ import figlet from "figlet";
 //import next from "next";
 
 import { credentials, authenticate }   from "./v1/middlewares";
-import { authRoute, logoutRoute, refreshRoute, postRoute  } from "./v1/route";
+import { authRoute, logoutRoute, refreshRoute, postRoute, commentRoute, tagRoute, categoryRoute } from "./v1/route";
 
 const PORT = parseInt(process.env.PORT || "3500");
 
@@ -97,6 +97,12 @@ class App {
     this.app.use("/logout", logoutRoute);
 
     this.app.use("/post", postRoute);
+
+    this.app.use("/comment", commentRoute);
+
+    this.app.use("/tag", tagRoute);
+
+    this.app.use("/category", categoryRoute);
 
     ////////////////////////////////
     // PROTECTED API routes
