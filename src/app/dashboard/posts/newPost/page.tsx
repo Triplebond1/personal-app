@@ -14,7 +14,7 @@ import remarkGfm from "remark-gfm";
 
 import { useAuth } from "../../../../components/auth/authProvider";
 import { createPost } from "@/src/service/post";
-import { PostStatus, PostType } from "@/src/types/post";
+import { PostProgress, PostStatus, PostType } from "@/src/types/post";
 import { createSlug, getErrorMessage, splitIds } from "@/src/lib/helpers";
 import { DASHBOARD_URL } from "@/src/lib/paths";
 
@@ -36,6 +36,7 @@ export default function NewPostPage() {
     useAuth();
 
   const contentRef = useRef<HTMLTextAreaElement>(null);
+  const referenceRef = useRef<HTMLTextAreaElement>(null);
 
   // Post fields
 
@@ -44,6 +45,7 @@ export default function NewPostPage() {
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState("");
+  const [reference, setReference] = useState("");
 
   // Prisma enum values
 
@@ -58,6 +60,7 @@ export default function NewPostPage() {
   // Editor state
 
   const [preview, setPreview] = useState(false);
+  const [refPreview, setRefPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
@@ -126,6 +129,38 @@ export default function NewPostPage() {
     });
   }
 
+    //////////////////////////////////////////////////
+  //Insert Markdown around the current reference selection.
+  //////////////////////////////////////////////////
+
+  function insertRefMarkdown(before: string, after = "") {
+    const textarea = referenceRef.current;
+
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = content.slice(start, end);
+
+    const newReference =
+      content.slice(0, start) +
+      before +
+      selectedText +
+      after +
+      content.slice(end);
+
+    setReference(newReference);
+
+    requestAnimationFrame(() => {
+      textarea.focus();
+
+      const selectionStart = start + before.length;
+      const selectionEnd = selectionStart + selectedText.length;
+
+      textarea.setSelectionRange(selectionStart, selectionEnd);
+    });
+  }
+
   /////////////////////
   // Reset the editor.
   /////////////////////
@@ -144,6 +179,7 @@ export default function NewPostPage() {
     setExcerpt("");
     setContent("");
     setCoverImage("");
+    setReference("")
     setTagIds("");
     setCategoryIds("");
     setType("WRITING");
@@ -191,6 +227,7 @@ export default function NewPostPage() {
         slug: slug.trim(),
         excerpt: excerpt.trim() || null,
         content,
+        references: reference.trim() || null,
         type,
         status: targetStatus,
         coverImage: coverImage.trim() || null,
@@ -681,6 +718,154 @@ export default function NewPostPage() {
                 {slug ? `/writings/${slug}` : "Your post URL will appear here."}
               </p>
             </section>
+
+
+           {/* Reference Editor tabs */}
+            <section className="rounded-xl border border-zinc-200 bg-white p-5" >
+              <h2 className="text-sm font-semibold text-zinc-950">
+                Reference Editor
+              </h2>
+              <p className="mt-1 text-xs leading-5 text-zinc-500">
+                Add reference to your post here.
+              </p>
+            <div className="mt-8 flex items-center justify-between border-b border-zinc-200">
+              <div className="flex gap-6">
+                <button
+                  type="button"
+                  onClick={() => setRefPreview(false)}
+                  className={`border-b-2 pb-3 text-sm font-medium transition ${
+                    !refPreview
+                      ? "border-zinc-950 text-zinc-950"
+                      : "border-transparent text-zinc-500 hover:text-zinc-800"
+                  }`}
+                >
+                  Write
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRefPreview(true)}
+                  className={`border-b-2 pb-3 text-sm font-medium transition ${
+                    refPreview
+                      ? "border-zinc-950 text-zinc-950"
+                      : "border-transparent text-zinc-500 hover:text-zinc-800"
+                  }`}
+                >
+                  Preview
+                </button>
+              </div>
+
+              <span className="pb-3 text-xs text-zinc-400">
+                Markdown
+              </span>
+            </div>
+
+            {!refPreview ? (
+              <>
+                {/* Formatting toolbar */}
+                <div className="mt-4 flex flex-wrap items-center gap-1 border-b border-zinc-100 pb-3">
+                  {[
+                    {
+                      label: "Bold",
+                      display: "B",
+                      before: "**",
+                      after: "**",
+                      className: "font-bold",
+                    },
+                    {
+                      label: "Italic",
+                      display: "I",
+                      before: "*",
+                      after: "*",
+                      className: "italic",
+                    },
+                    {
+                      label: "Inline code",
+                      display: "</>",
+                      before: "`",
+                      after: "`",
+                      className: "font-mono",
+                    },
+                    {
+                      label: "Heading",
+                      display: "H2",
+                      before: "## ",
+                      after: "",
+                      className: "",
+                    },
+                    {
+                      label: "List",
+                      display: "List",
+                      before: "- ",
+                      after: "",
+                      className: "",
+                    },
+                    {
+                      label: "Quote",
+                      display: "Quote",
+                      before: "> ",
+                      after: "",
+                      className: "",
+                    },
+                    {
+                      label: "Link",
+                      display: "Link",
+                      before: "[",
+                      after: "](https://example.com)",
+                      className: "",
+                    },
+                    {
+                      label: "Code block",
+                      display: "{ }",
+                      before: "\n```ts\n",
+                      after: "\n```\n",
+                      className: "font-mono",
+                    },
+                  ].map((tool) => (
+                    <button
+                      key={tool.label}
+                      type="button"
+                      title={tool.label}
+                      onClick={() =>
+                        insertRefMarkdown(tool.before, tool.after)
+                      }
+                      className={`rounded-md px-3 py-2 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950 ${tool.className}`}
+                    >
+                      {tool.display}
+                    </button>
+                  ))}
+                </div>
+
+                <label htmlFor="content" className="sr-only">
+                  Post content in Markdown
+                </label>
+
+                <textarea
+                  ref={referenceRef}
+                  id="reference"
+                  value={reference}
+                  onChange={(event) => setReference(event.target.value)}
+                  placeholder={
+                    "Start writing... your reference here using Markdown."
+                  }
+                  className="mt-5 min-h-40 w-full resize-y border-0 bg-transparent font-mono text-sm leading-7 text-zinc-800 outline-none placeholder:text-zinc-300 sm:min-h-50.25"
+                  spellCheck
+                />
+              </>
+            ) : (
+              <article className="min-h-40 py-8 sm:min-h-50.25">
+
+                <div className="prose prose-zinc mt-8 max-w-none wrap-break-words prose-headings:tracking-tight prose-a:text-zinc-900 prose-pre:overflow-x-auto">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {reference || "Nothing written yet."}
+                  </ReactMarkdown>
+                </div>
+              </article>
+            )}
+
+            </section>
+
+
 
             {/* Cover image */}
             <section className="rounded-xl border border-zinc-200 bg-white p-5">

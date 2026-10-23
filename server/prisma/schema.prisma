@@ -52,7 +52,7 @@ enum PostType {
   NOTE
 }
 
-enum PostProgress {
+enum TopicProgress {
   INPROGRESS
   COMPLETED
 }
@@ -60,13 +60,12 @@ enum PostProgress {
 model Post {
   id String @id @default(uuid())
 
-  title    String
-  slug     String        @unique
-  excerpt  String?
-  content  String
-  type     PostType      @default(WRITING)
-  status   PostStatus    @default(DRAFT)
-  progress PostProgress?
+  title   String
+  slug    String     @unique
+  excerpt String?
+  content String
+  type    PostType   @default(WRITING)
+  status  PostStatus @default(DRAFT)
 
   coverImage String?
 
@@ -132,8 +131,9 @@ model Category {
 model Tag {
   id String @id @default(uuid())
 
-  name String @unique
-  slug String @unique
+  name     String         @unique
+  slug     String         @unique
+  progress TopicProgress?
 
   posts Post[]
 

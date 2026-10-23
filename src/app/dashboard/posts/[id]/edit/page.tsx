@@ -12,84 +12,14 @@ import { useParams, useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAuth } from "../../../../../components/auth/authProvider";
+import { EMPTY_FORM, FormState, Post, PostStatus, PostType } from "@/src/types/post";
+import { getPostById, updatePost } from "@/src/service/post";
+import { createSlug, splitIds } from "@/src/lib/helpers";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3500";
 
-type PostType = "WRITING" | "RESEARCH" | "PROJECT" | "NOTE";
 
-type PostStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-type Post = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  content: string;
-  type: PostType;
-  status: PostStatus;
-  coverImage: string | null;
-  readTime: number | null;
-  tags?: Array<{
-    id: string;
-    name: string;
-  }>;
-  categories?: Array<{
-    id: string;
-    name: string;
-  }>;
-  publishedAt?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
-};
 
-type ApiResponse = {
-  success: boolean;
-  message?: string;
-  data?: {
-    post?: Post;
-  };
-};
-
-type FormState = {
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  coverImage: string;
-  type: PostType;
-  status: PostStatus;
-  tagIds: string;
-  categoryIds: string;
-};
-
-const EMPTY_FORM: FormState = {
-  title: "",
-  slug: "",
-  excerpt: "",
-  content: "",
-  coverImage: "",
-  type: "WRITING",
-  status: "DRAFT",
-  tagIds: "",
-  categoryIds: "",
-};
-
-function createSlug(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
-
-function splitIds(value: string): string[] {
-  return value
-    .split(",")
-    .map((id) => id.trim())
-    .filter(Boolean);
-}
 
 function getPostForm(post: Post): FormState {
   return {
@@ -98,6 +28,7 @@ function getPostForm(post: Post): FormState {
     excerpt: post.excerpt ?? "",
     content: post.content ?? "",
     coverImage: post.coverImage ?? "",
+    references: post.references ?? "",
     type: post.type,
     status: post.status,
     tagIds: post.tags?.map((tag) => tag.id).join(", ") ?? "",
@@ -124,9 +55,11 @@ export default function EditPostPage() {
   const [success, setSuccess] = useState("");
 
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
+  const [activeRefTab, setActiveRefTab] = useState<"write" | "preview">("write");
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   const contentRef = useRef<HTMLTextAreaElement>(null);
+  const referenceRef = useRef<HTMLTextAreaElement>(null);
 
   const updateField = <K extends keyof FormState>(
     field: K,
@@ -148,13 +81,8 @@ export default function EditPostPage() {
 
   /**
    * Fetch the post and populate the form.
-   *
-   * This assumes GET /post/:id returns:
-   * { success: true, data: { post: {...} } }
-   *
-   * If your backend uses a different route or response shape,
-   * adjust this request to match your controller.
    */
+
   const fetchPost = useCallback(async () => {
     if (!accessToken || !postId) return;
 
@@ -162,27 +90,16 @@ export default function EditPostPage() {
     setError("");
 
     try {
-      const response = await fetch(
-        `${API_URL}/post/${encodeURIComponent(postId)}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-          cache: "no-store",
-        },
-      );
+      const response = await getPostById(postId, accessToken)
 
-      const result = (await response.json()) as ApiResponse;
 
-      if (!response.ok || !result.success || !result.data?.post) {
+      if (!response.success || !response.data?.post) {
         throw new Error(
-          result.message || "Unable to load this post.",
+          response.message || "Unable to load this post.",
         );
       }
 
-      const fetchedPost = result.data.post;
+      const fetchedPost = response.data.post;
 
       setPost(fetchedPost);
       setForm(getPostForm(fetchedPost));
@@ -268,6 +185,40 @@ export default function EditPostPage() {
     });
   };
 
+  const insertRefMarkdown = (
+    before: string,
+    after = "",
+    placeholder = "text",
+  ) => {
+    const textarea = referenceRef.current;
+
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    const selectedText = form.references.slice(start, end);
+    const text = selectedText || placeholder;
+
+    const replacement = `${before}${text}${after}`;
+
+    const updatedReference =
+      form.references.slice(0, start) +
+      replacement +
+      form.references.slice(end);
+
+    updateField("content", updatedReference);
+
+    requestAnimationFrame(() => {
+      textarea.focus();
+
+      const selectionStart = start + before.length;
+      const selectionEnd = selectionStart + text.length;
+
+      textarea.setSelectionRange(selectionStart, selectionEnd);
+    });
+  };
+
   /**
    * Update an existing post.
    *
@@ -306,40 +257,32 @@ export default function EditPostPage() {
     setSuccess("");
 
     try {
-      const response = await fetch(
-        `${API_URL}/post/${encodeURIComponent(postId)}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            title: form.title.trim(),
-            slug: form.slug.trim(),
-            excerpt: form.excerpt.trim() || null,
-            content: form.content,
-            type: form.type,
-            status: targetStatus,
-            coverImage: form.coverImage.trim() || null,
-            tagIds: splitIds(form.tagIds),
-            categoryIds: splitIds(form.categoryIds),
-          }),
-        },
-      );
+      const body = {
+          title: form.title.trim(),
+          slug: form.slug.trim(),
+          excerpt: form.excerpt.trim() || null,
+          content: form.content,
+          type: form.type,
+          references: form.references,
+          status: targetStatus,
+          coverImage: form.coverImage.trim() || null,
+          tagIds: splitIds(form.tagIds),
+          categoryIds: splitIds(form.categoryIds),
+      
+      }
 
-      const result = (await response.json()) as ApiResponse;
+      const response = await updatePost(postId, body, accessToken)
 
-      if (!response.ok || !result.success) {
+
+      if (!response.success) {
         throw new Error(
-          result.message || "Unable to update this post.",
+          response.message || "Unable to update this post.",
         );
       }
 
-      if (result.data?.post) {
-        setPost(result.data.post);
-        setForm(getPostForm(result.data.post));
+      if (response.data?.post) {
+        setPost(response.data.post);
+        setForm(getPostForm(response.data.post));
       } else {
         setForm((current) => ({
           ...current,
@@ -375,7 +318,7 @@ export default function EditPostPage() {
           <div className="h-4 w-32 rounded bg-zinc-200" />
           <div className="h-10 w-72 rounded bg-zinc-200" />
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-            <div className="h-[650px] rounded-2xl border border-zinc-200 bg-white" />
+            <div className="h-162.5 rounded-2xl border border-zinc-200 bg-white" />
             <div className="h-96 rounded-2xl border border-zinc-200 bg-white" />
           </div>
         </div>
@@ -686,7 +629,7 @@ export default function EditPostPage() {
                     }
                     placeholder="Continue writing your post..."
                     spellCheck
-                    className="min-h-[500px] w-full resize-y border-0 px-5 py-6 font-mono text-sm leading-7 text-zinc-800 outline-none focus:ring-0 sm:px-7"
+                    className="min-h-125 w-full resize-y border-0 px-5 py-6 font-mono text-sm leading-7 text-zinc-800 outline-none focus:ring-0 sm:px-7"
                   />
 
                   <div className="flex flex-wrap justify-between gap-2 border-t border-zinc-100 px-5 py-3 text-xs text-zinc-400 sm:px-7">
@@ -695,7 +638,7 @@ export default function EditPostPage() {
                   </div>
                 </>
               ) : (
-                <article className="min-h-[500px] px-5 py-6 sm:px-7">
+                <article className="min-h-125 px-5 py-6 sm:px-7">
                   {form.content.trim() ? (
                     <div className="prose prose-zinc max-w-none prose-headings:tracking-tight prose-pre:overflow-x-auto">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -808,6 +751,153 @@ export default function EditPostPage() {
               </div>
             </section>
 
+
+
+              {/* References Editor */}
+            <section>
+                           
+            <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-4 py-3">
+                <div>
+                  <h2 className="text-sm font-semibold text-zinc-900">
+                    References
+                  </h2>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    Markdown supported
+                  </p>
+                </div>
+
+                <div className="flex rounded-lg bg-zinc-100 p-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveRefTab("write")}
+                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                      activeRefTab === "write"
+                        ? "bg-white text-zinc-900 shadow-sm"
+                        : "text-zinc-500 hover:text-zinc-900"
+                    }`}
+                  >
+                    Write
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveRefTab("preview")}
+                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                      activeRefTab === "preview"
+                        ? "bg-white text-zinc-900 shadow-sm"
+                        : "text-zinc-500 hover:text-zinc-900"
+                    }`}
+                  >
+                    Preview
+                  </button>
+                </div>
+              </div>
+
+              {activeRefTab === "write" ? (
+                <>
+                  <div className="flex flex-wrap items-center gap-1 border-b border-zinc-100 bg-zinc-50/70 p-2">
+                    <ToolbarButton
+                      label="Bold"
+                      onClick={() => insertRefMarkdown("**", "**", "bold text")}
+                    >
+                      <strong>B</strong>
+                    </ToolbarButton>
+
+                    <ToolbarButton
+                      label="Italic"
+                      onClick={() => insertRefMarkdown("*", "*", "italic text")}
+                    >
+                      <em>I</em>
+                    </ToolbarButton>
+
+                    <ToolbarButton
+                      label="Inline code"
+                      onClick={() => insertRefMarkdown("`", "`", "code")}
+                    >
+                      {"</>"}
+                    </ToolbarButton>
+
+                    <ToolbarButton
+                      label="Heading"
+                      onClick={() => insertRefMarkdown("## ", "", "Heading")}
+                    >
+                      H
+                    </ToolbarButton>
+
+                    <ToolbarButton
+                      label="Bullet list"
+                      onClick={() => insertRefMarkdown("- ", "", "List item")}
+                    >
+                      •
+                    </ToolbarButton>
+
+                    <ToolbarButton
+                      label="Quote"
+                      onClick={() => insertRefMarkdown("> ", "", "Quote")}
+                    >
+                      ❝
+                    </ToolbarButton>
+
+                    <ToolbarButton
+                      label="Link"
+                      onClick={() =>
+                        insertRefMarkdown("[", "](https://example.com)", "link text")
+                      }
+                    >
+                      ↗
+                    </ToolbarButton>
+
+                    <ToolbarButton
+                      label="Code block"
+                      onClick={() =>
+                        insertRefMarkdown(
+                          "```\n",
+                          "\n```",
+                          "const example = true;",
+                        )
+                      }
+                    >
+                      {"{ }"}
+                    </ToolbarButton>
+                  </div>
+
+                  <textarea
+                    ref={referenceRef}
+                    value={form.references}
+                    onChange={(event) =>
+                      updateField("references", event.target.value)
+                    }
+                    placeholder="Continue writing your references..."
+                    spellCheck
+                    className="min-h-40 w-full resize-y border-0 px-5 py-6 font-mono text-sm leading-7 text-zinc-800 outline-none focus:ring-0 sm:px-7"
+                  />
+
+                  <div className="flex flex-wrap justify-between gap-2 border-t border-zinc-100 px-5 py-3 text-xs text-zinc-400 sm:px-7">
+                    <span>Markdown editor</span>
+                  </div>
+                </>
+              ) : (
+                <article className="min-h-40 px-5 py-6 sm:px-7">
+                  {form.references.trim() ? (
+                    <div className="prose prose-zinc max-w-none prose-headings:tracking-tight prose-pre:overflow-x-auto">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {form.references}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-zinc-400">
+                      Your Markdown preview will appear here.
+                    </p>
+                  )}
+                </article>
+              )}
+            </div>
+            </section>
+
+
+
+                
             <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
               <h2 className="text-sm font-semibold text-zinc-900">
                 URL & media

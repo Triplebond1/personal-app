@@ -54,8 +54,6 @@ class PostService {
 
         type: data.type,
 
-        progress: data.progress,
-
         references: data.references,
 
         readTime: data.readTime,
@@ -190,7 +188,6 @@ class PostService {
     const where = {
       status: data.status,
       type: data.type,
-      progress: data.progress,
 
       tags: data.tag
         ? {
@@ -419,7 +416,6 @@ class PostService {
       excerpt: data.excerpt,
       references: data.references,
       content: data.content,
-      progress: data.progress,
       status: data.status,
       type: data.type,
       coverImage: data.coverImage,

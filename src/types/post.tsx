@@ -2,12 +2,15 @@ export type PostStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type PostType = "WRITING" | "RESEARCH" | "PROJECT" | "NOTE";
 
+export type PostProgress = "INPROGRESS" | "COMPLETED"
+
 export type Post = {
   id: string;
   title: string;
   slug: string;
   content: string;
   excerpt: string | null;
+  references: string | null;
   status: PostStatus;
   type: PostType;
   publishedAt?: string | null ;
@@ -70,4 +73,32 @@ export type GetPostsParams = {
   type?: PostType;
   tag?: string;
   category?: string;
+};
+
+
+
+export type FormState = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  references: string;
+  type: PostType;
+  status: PostStatus;
+  tagIds: string;
+  categoryIds: string;
+};
+
+export const EMPTY_FORM: FormState = {
+  title: "",
+  slug: "",
+  excerpt: "",
+  content: "",
+  coverImage: "",
+  references: "",
+  type: "WRITING",
+  status: "DRAFT",
+  tagIds: "",
+  categoryIds: "",
 };

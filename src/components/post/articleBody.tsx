@@ -1,14 +1,15 @@
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
 import { Post } from "@/src/types/post";
+import { ArticleRefrences } from "./articleReferences";
 
 
 export const ArticleBody = ({ post }: {post:Post}) => { 
-    
+
    return (  <div className="border-t border-zinc-200">
           <div className="mx-auto max-w-3xl px-6 py-5 md:py-5">
 
-      
+
       {/* Article */}
       <article
         className="
@@ -46,7 +47,11 @@ export const ArticleBody = ({ post }: {post:Post}) => {
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {post.content}
         </ReactMarkdown>
-      </article>
+       </article>
+
+       <ArticleRefrences post={post}></ArticleRefrences>
         </div>
       </div>)
 }
+
+
