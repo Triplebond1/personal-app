@@ -6,11 +6,17 @@ export function getErrorMessage(error: unknown, message: string) {
 
 
 export function formatDate(date: string) {
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "Invalid date";
+  }
+
   return new Intl.DateTimeFormat("en", {
     day: "numeric",
     month: "short",
     year: "numeric",
-  }).format(new Date(date));
+  }).format(parsedDate);
 }
 
 
@@ -28,4 +34,14 @@ export function splitIds(value: string) {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+export function calculateReadTime(content: string): number {
+  if (content.trim() === "") {
+    return 0;
+  } 
+    const words = content.trim().split(/\s+/).length;
+
+    return Math.ceil(words / 200);
+  
 }
