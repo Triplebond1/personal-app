@@ -32,9 +32,9 @@ class PostService {
     data: CreatePostInput,
     authorId: string
   ) => {
-
+    let readTime
     if (data.status === "PUBLISHED") {
-      data.readTime = this.calculateReadTime(data.content);
+      readTime = this.calculateReadTime(data.content);
       data.publishedAt = new Date();
     }
 
@@ -56,7 +56,7 @@ class PostService {
 
         references: data.references,
 
-        readTime: data.readTime,
+        readTime: readTime,
 
         coverImage: data.coverImage,
 
