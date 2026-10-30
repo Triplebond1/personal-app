@@ -139,10 +139,11 @@ class PostService {
 
   public getPostBySlug = async (slug: string) => {
 
-    return prisma.post.findUniqueOrThrow({
+    return prisma.post.findFirstOrThrow({
 
       where: {
-        slug
+        slug,
+        status: "PUBLISHED"
       },
 
       include: {

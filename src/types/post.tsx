@@ -10,7 +10,7 @@ export type Post = {
   slug: string;
   content: string;
   excerpt: string | null;
-  references: string | null;
+  references?: string | null;
   status: PostStatus;
   type: PostType;
   publishedAt?: string | null ;

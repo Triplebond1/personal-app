@@ -8,6 +8,7 @@ let app: (typeof import("../../app"))["default"];
 let prisma: (typeof import("../lib/prisma"))["prisma"];
 let authorId: string | undefined;
 let publishedSlug: string;
+let draftSlug: string;
 
 describe("Post API integration tests", () => {
   beforeAll(async () => {
@@ -56,6 +57,19 @@ app = appModule.default;
     });
 
     publishedSlug = post.slug;
+
+    const draft = await prisma.post.create({
+  data: {
+    title: "API Integration Test Draft",
+    slug: `api-draft-test-${randomUUID()}`,
+    content: "This is a draft post for API testing.",
+    type: "WRITING",
+    status: "DRAFT",
+    authorId: author.id,
+  },
+});
+
+draftSlug = draft.slug;
   });
 
 
@@ -73,7 +87,34 @@ app = appModule.default;
     slug: publishedSlug,
     status: "PUBLISHED",
   });
+
+  
   });
+
+  it("should not allow the public to retrieve a draft post", async () => {
+  const response = await request(app).get(
+    `/post/slug/${draftSlug}`
+  );
+
+  expect(response.status).toBe(404);
+  expect(response.body.success).toBe(false);
+  expect(response.body.message).toBe("Post not found");
+});
+
+it("should reject requests without an authentication token", async () => {
+  const response = await request(app).get("/post/all");
+
+  expect(response.status).toBe(401);
+});
+
+
+it("should reject requests with an invalid authentication token", async () => {
+  const response = await request(app)
+    .get("/post/all")
+    .set("Authorization", "Bearer invalid-token");
+
+  expect(response.status).toBe(403);
+});
 
 
   afterAll(async () => {

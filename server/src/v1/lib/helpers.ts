@@ -21,6 +21,7 @@ export const generateNewAccessToken = (foundUser: User) => {
         {
             sub: foundUser.id,
             email: foundUser.email,
+            role: foundUser.role,
             type: "access",
         },
         process.env.ACCESS_TOKEN_SECRET!,

@@ -34,7 +34,7 @@ class Auth {
     res.sendStatus(403);
     return;
   }
-  
+  console.log(decoded)
   const payload = decoded as AccessTokenPayload;
 
   req.user = {

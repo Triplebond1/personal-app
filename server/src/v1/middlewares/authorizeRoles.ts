@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 import { Role } from "@prisma/client";
 import { AuthenticatedRequest } from "../types";
 
-export const authorizeRoles = (...allowedRoles: Role[]) => {
+const authorizeRoles = (...allowedRoles: Role[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user;
 
@@ -23,3 +23,5 @@ export const authorizeRoles = (...allowedRoles: Role[]) => {
     next();
   };
 };
+
+export default authorizeRoles

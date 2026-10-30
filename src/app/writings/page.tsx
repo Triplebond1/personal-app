@@ -1,11 +1,8 @@
 
 "use client";
 
-import { getPosts } from "@/src/service/post";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPublishedPosts } from "../../service/post";
-import { formatDate } from "@/src/lib/helpers";
 import { PostCard } from "@/src/components/post/post";
 import { Post } from "@/src/types/post";
 
@@ -109,6 +106,7 @@ export default function WritingPage() {
             content: post.content,
             excerpt: post.excerpt,
             status: post.status,
+            references: post.references,
             type:post.type,
             authorId:post.authorId,
             readTime: post.readTime ||  null,

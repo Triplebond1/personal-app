@@ -57,7 +57,7 @@ export const PostCard = ({ post, type }: PostCardProps) => {
           <h3 className="max-w-3xl text-xl font-medium leading-snug tracking-tight text-zinc-900 transition-colors duration-300 group-hover:text-zinc-500 sm:text-2xl lg:text-[28px]">
             <Link
               href={`/${lowerCaseType}s/${post.slug}`}
-              className="outline-none after:absolute after:inset-0 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-900"
+              className="outline-none after:absolute after:inset-0 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-zinc-900"
             >
               {post.title}
             </Link>

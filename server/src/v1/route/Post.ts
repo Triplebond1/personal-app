@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import  PostController  from "../controllers/PostController";
 
-import { authenticate } from "../middlewares";
+import { authenticate, authorizeRoles } from "../middlewares";
 
 
 class PostRoute {
@@ -58,7 +58,7 @@ class PostRoute {
 
     this.router.post(
       "/",
-      authenticate,
+      authenticate, authorizeRoles("ADMIN", "MODERATOR"),
       this.postController.createPost.bind(
         this.postController
       )
@@ -69,7 +69,7 @@ class PostRoute {
 
     this.router.get(
       "/all",
-      authenticate,
+      authenticate, authorizeRoles("ADMIN", "MODERATOR"),
       this.postController.getPosts.bind(
         this.postController
       )
@@ -102,7 +102,7 @@ class PostRoute {
 
     this.router.patch(
       "/:id",
-      authenticate,
+      authenticate, authorizeRoles("ADMIN", "MODERATOR"),
       this.postController.updatePost.bind(
         this.postController
       )
@@ -113,7 +113,7 @@ class PostRoute {
 
     this.router.patch(
       "/:id/publish",
-      authenticate,
+      authenticate, authorizeRoles("ADMIN", "MODERATOR"),
       this.postController.publishPost.bind(
         this.postController
       )
@@ -134,8 +134,8 @@ class PostRoute {
     // Delete post
 
     this.router.delete(
-      "/:id",
-      authenticate,
+      "/:id", 
+      authenticate, authorizeRoles("ADMIN", "MODERATOR"),
       this.postController.deletePost.bind(
         this.postController
       )
